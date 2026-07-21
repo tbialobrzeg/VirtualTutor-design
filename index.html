@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body{margin:0;background:oklch(97% 0.014 75);}
+  @keyframes vt-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes vt-dot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+  @keyframes vt-pulse{0%,100%{box-shadow:0 0 0 0 oklch(60% 0.13 25 / 0.35)}50%{box-shadow:0 0 0 14px oklch(60% 0.13 25 / 0)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;padding:clamp(12px,3vw,40px);font-family:'Plus Jakarta Sans',system-ui,sans-serif;box-sizing:border-box;color:oklch(24% 0.015 260);">
+  <div style="width:100%;max-width:1180px;min-height:min(860px,90vh);background:oklch(99% 0.006 75);border-radius:28px;box-shadow:0 24px 60px -20px oklch(30% 0.02 260 / 0.18);overflow:hidden;display:flex;flex-direction:column;">
+
+    <div style="display:flex;flex-direction:column;border-bottom:1px solid oklch(90% 0.012 75);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:clamp(16px,2.4vw,26px) clamp(20px,3.5vw,44px) 6px;flex-wrap:wrap;gap:12px;">
+        <div style="width:110px;display:flex;">
+          <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+            <button data-testid="back-button" onClick="{{ goBack }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;color:oklch(45% 0.015 260);font-size:14px;font-weight:600;padding:8px 12px;border-radius:100px;" style-hover="background:oklch(95% 0.01 75);" style-focus="outline:2px solid oklch(46% 0.06 200);outline-offset:2px;">
+              <span style="font-size:16px;">←</span> Wstecz
+            </button>
+          </sc-if>
+        </div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:.08em;color:oklch(45% 0.015 260);">VIRTUALTUTOR</div>
+        <div style="width:110px;display:flex;justify-content:flex-end;gap:8px;">
+          <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;font-weight:700;color:oklch(46% 0.06 200);">{{ wStepText }}</div>
+          </sc-if>
+          <sc-if value="{{ !isWizard }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ dot1 }};"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ dot2 }};"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ dot3 }};"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:{{ dot4 }};"></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ showVariantPill }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;padding-bottom:12px;position:relative;">
+          <button data-testid="variant-pill" onClick="{{ toggleVariantPopover }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:oklch(46% 0.06 200);background:oklch(95% 0.02 200);padding:6px 14px;border-radius:100px;border:1px solid oklch(88% 0.03 200);">
+            {{ currentVariantLabel }} <span style="font-size:10px;">▾</span>
+          </button>
+          <sc-if value="{{ variantPopoverOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:100%;margin-top:6px;background:oklch(99% 0.006 75);border:1px solid oklch(90% 0.012 75);border-radius:14px;box-shadow:0 12px 28px -10px oklch(30% 0.02 260 / 0.25);padding:8px;display:flex;flex-direction:column;gap:4px;z-index:10;min-width:220px;">
+              <sc-for list="{{ variantOptions }}" as="opt" hint-placeholder-count="2">
+                <button data-testid="variant-option-{{ opt.id }}" onClick="{{ opt.select }}" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:10px;background:{{ opt.bg }};text-align:left;" style-hover="background:oklch(95% 0.01 75);">
+                  <span style="font-size:13.5px;font-weight:600;color:oklch(24% 0.015 260);">{{ opt.label }}<sc-if value="{{ opt.isCurrent }}" hint-placeholder-val="{{ false }}"> ✓</sc-if></span>
+                  <sc-if value="{{ !opt.ready }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:10.5px;font-weight:700;color:oklch(50% 0.10 45);background:oklch(95% 0.03 45);padding:3px 8px;border-radius:100px;">Wymaga konfiguracji</span>
+                  </sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;overflow:auto;">
+
+      <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(24px,6vw,72px);gap:clamp(18px,2.6vw,26px);animation:vt-fade .5s ease;">
+          <div style="position:relative;width:120px;height:88px;">
+            <div style="position:absolute;left:0;top:6px;width:82px;height:82px;border-radius:50%;background:linear-gradient(155deg, oklch(72% 0.06 200), oklch(46% 0.06 200));"></div>
+            <div style="position:absolute;right:0;top:0;width:56px;height:56px;border-radius:50%;background:oklch(80% 0.10 45);"></div>
+          </div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:.08em;color:oklch(54% 0.06 200);">VIRTUALTUTOR</div>
+          <h1 style="margin:0;font-size:clamp(26px,3.6vw,42px);line-height:1.15;color:oklch(24% 0.015 260);max-width:15ch;font-weight:700;">
+            Ucz się języka, <span style="font-family:'Lora',serif;font-style:italic;font-weight:500;color:oklch(46% 0.06 200);">po prostu rozmawiając</span>
+          </h1>
+          <p style="margin:0;max-width:44ch;font-size:clamp(15px,1.5vw,17px);line-height:1.6;color:oklch(45% 0.015 260);">
+            VirtualTutor uczy przez naturalne rozmowy z osobistym tutorem — bez lekcji, testów i presji.
+          </p>
+          <button data-testid="welcome-start" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:16px;font-weight:600;box-shadow:0 10px 24px -10px oklch(40% 0.06 200 / 0.5);" style-hover="background:oklch(40% 0.06 200);">
+            Zacznij rozmowę
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCharacters }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:clamp(24px,4vw,52px);animation:vt-fade .5s ease;">
+          <div style="text-align:center;max-width:56ch;margin:0 auto 36px;">
+            <h2 style="margin:0 0 10px;font-size:clamp(21px,2.6vw,28px);font-weight:700;">Wybierz swojego tutora</h2>
+            <p style="margin:0;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">Każda osoba prowadzi rozmowę na swój sposób — wybierz tę, z którą będzie Ci najwygodniej.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1000px;margin:0 auto;">
+            <sc-for list="{{ characters }}" as="char" hint-placeholder-count="9">
+              <div data-testid="tutor-tile-{{ char.id }}" style="width:100%;background:{{ char.cardBg }};border:1.5px solid {{ char.borderColor }};border-radius:20px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;box-sizing:border-box;position:relative;">
+                <sc-if value="{{ char.isLastUsed }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:12px;left:12px;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:oklch(50% 0.10 45);background:oklch(97% 0.03 45);padding:4px 9px;border-radius:100px;">OSTATNIO</div>
+                </sc-if>
+                <button onClick="{{ char.startNew }}" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;" style-hover="opacity:0.92;" style-focus="outline:2px solid oklch(46% 0.06 200);outline-offset:3px;">
+                  <image-slot id="{{ char.photoId }}" shape="circle" src="{{ char.photoSrc }}" placeholder="{{ char.photoPlaceholder }}" style="width:120px;height:120px;border-radius:50%;flex:none;border:4px solid oklch(99% 0.006 75);box-shadow:0 0 0 1.5px oklch(88% 0.012 75);"></image-slot>
+                  <div style="font-size:16px;font-weight:700;">{{ char.name }}</div>
+                  <div style="font-size:12.5px;line-height:1.5;color:oklch(45% 0.015 260);">{{ char.personality }}</div>
+                  <div style="font-size:11.5px;font-weight:600;color:oklch(50% 0.10 45);background:oklch(95% 0.03 45);padding:5px 11px;border-radius:100px;">{{ char.style }}</div>
+                </button>
+                <sc-if value="{{ char.hasSaved }}" hint-placeholder-val="{{ false }}">
+                  <button data-testid="continue-conversation-{{ char.id }}" onClick="{{ char.continueConv }}" style="all:unset;cursor:pointer;margin-top:4px;width:100%;box-sizing:border-box;padding:11px 14px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:13.5px;font-weight:700;text-align:center;" style-hover="background:oklch(40% 0.06 200);">
+                    ▶ Kontynuuj rozmowę
+                  </button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ false }}">
+        <div data-testid="{{ wScreenTestId }}" style="flex:1;display:flex;flex-direction:column;animation:vt-fade .4s ease;">
+          <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px;padding:16px clamp(20px,4vw,48px) 0;">
+            <sc-for list="{{ wSegments }}" as="seg" hint-placeholder-count="5">
+              <div data-testid="progress-segment-{{ seg.n }}" style="display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:{{ seg.color }};">
+                <span style="width:18px;height:18px;border-radius:50%;background:{{ seg.dotBg }};color:{{ seg.dotColor }};display:flex;align-items:center;justify-content:center;font-size:10.5px;">{{ seg.mark }}</span>
+                {{ seg.label }}
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(20px,4vw,56px);gap:16px;">
+
+            <sc-if value="{{ wHasBlockingError }}" hint-placeholder-val="{{ false }}">
+              <div data-testid="{{ wError.testid }}" style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 40);display:flex;align-items:center;justify-content:center;font-size:26px;" aria-hidden="true">⚠</div>
+              <h2 style="margin:0;font-size:21px;font-weight:700;max-width:26ch;">{{ wError.title }}</h2>
+              <p role="status" aria-live="polite" style="margin:0;max-width:44ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">{{ wError.body }}</p>
+              <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
+              </sc-if>
+              <button data-testid="{{ wError.actionTestid }}" onClick="{{ wError.action }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">{{ wError.actionLabel }}</button>
+            </sc-if>
+
+            <sc-if value="{{ wIsWaiting }}" hint-placeholder-val="{{ false }}">
+              <div data-testid="waiting-settings" style="width:60px;height:60px;border-radius:50%;background:oklch(95% 0.015 200);display:flex;align-items:center;justify-content:center;font-size:24px;" aria-hidden="true">⏳</div>
+              <h2 style="margin:0;font-size:20px;font-weight:700;">Czekam na zmianę ustawień…</h2>
+              <p role="status" aria-live="polite" style="margin:0;max-width:42ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Po dokonaniu zmiany wróć do aplikacji i sprawdź ponownie — pozostałe kroki i wybory pozostaną zapisane.</p>
+              <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
+              </sc-if>
+              <button data-testid="recheck-settings" onClick="{{ wRecheck }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Sprawdź ponownie</button>
+            </sc-if>
+
+            <sc-if value="{{ wShowNormal }}" hint-placeholder-val="{{ true }}">
+
+              <sc-if value="{{ wIsChooseVariant }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">PIERWSZY KROK</div>
+                <h2 style="margin:0;font-size:22px;font-weight:700;max-width:26ch;">Jakiego angielskiego chcesz się teraz uczyć?</h2>
+                <p style="margin:0;max-width:42ch;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">To ustawienie dotyczy całej aplikacji, niezależnie od wybranego tutora. W każdej chwili będziesz mógł je zmienić.</p>
+                <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+                  <button data-testid="choose-variant-us" onClick="{{ chooseVariantUS }}" style="all:unset;cursor:pointer;padding:20px 30px;border-radius:16px;border:1.5px solid oklch(88% 0.012 75);background:oklch(99% 0.006 75);font-size:15px;font-weight:700;min-width:160px;" style-hover="border-color:oklch(60% 0.06 200);">English US</button>
+                  <button data-testid="choose-variant-uk" onClick="{{ chooseVariantUK }}" style="all:unset;cursor:pointer;padding:20px 30px;border-radius:16px;border:1.5px solid oklch(88% 0.012 75);background:oklch(99% 0.006 75);font-size:15px;font-weight:700;min-width:160px;" style-hover="border-color:oklch(60% 0.06 200);">English UK</button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ wIsMicIntro }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">MIKROFON</div>
+                <h2 style="margin:0;font-size:22px;font-weight:700;max-width:26ch;">Za chwilę sprawdzimy Twój mikrofon</h2>
+                <p style="margin:0;max-width:40ch;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">Poprosimy Cię o powiedzenie kilku słów, aby upewnić się, że mikrofon działa poprawnie. To jedyny test mikrofonu — dotyczy obu wariantów językowych.</p>
+                <button data-testid="mic-check-start" onClick="{{ wStartMic }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij sprawdzanie mikrofonu</button>
+              </sc-if>
+
+              <sc-if value="{{ wIsMicActive }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">MIKROFON</div>
+                <div data-testid="mic-icon" style="width:76px;height:76px;border-radius:50%;background:oklch(60% 0.13 25);display:flex;align-items:center;justify-content:center;font-size:30px;color:oklch(99% 0.005 75);animation:vt-pulse 1.6s infinite;" aria-label="Mikrofon aktywny">🎙</div>
+                <div data-testid="mic-meter" style="display:flex;align-items:flex-end;gap:4px;height:40px;" aria-hidden="true">
+                  <sc-for list="{{ wLevels }}" as="lvl" hint-placeholder-count="20">
+                    <div style="width:5px;border-radius:3px;background:oklch(46% 0.06 200);height:{{ lvl.h }}px;transition:height .12s ease;"></div>
+                  </sc-for>
+                </div>
+                <p style="margin:0;font-size:13.5px;color:oklch(50% 0.015 260);">Powiedz kilka słów, aby sprawdzić mikrofon</p>
+                <div role="status" aria-live="polite" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:{{ wMicStatusColor }};">
+                  <span aria-hidden="true">{{ wMicStatusIcon }}</span> {{ wMicStatusText }}
+                </div>
+                <button data-testid="mic-check-stop" onClick="{{ wStopMic }}" style="all:unset;cursor:pointer;margin-top:4px;padding:14px 28px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ test</button>
+              </sc-if>
+
+              <sc-if value="{{ wIsMicResult }}" hint-placeholder-val="{{ false }}">
+                <div style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
+                <h2 style="margin:0;font-size:21px;font-weight:700;">Mikrofon działa poprawnie.</h2>
+                <button data-testid="mic-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;white-space:nowrap;">Sprawdź rozpoznawanie mowy — {{ wVariantLabel }}</button>
+              </sc-if>
+
+              <sc-if value="{{ wIsAvailability }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">ROZPOZNAWANIE MOWY — {{ wVariantLabelUpper }}</div>
+                <sc-if value="{{ wAvailChecking }}" hint-placeholder-val="{{ true }}">
+                  <div data-testid="availability-checking" style="width:56px;height:56px;border-radius:50%;background:oklch(95% 0.015 200);display:flex;align-items:center;justify-content:center;font-size:22px;animation:vt-pulse 1.6s infinite;" aria-hidden="true">⏳</div>
+                  <h2 style="margin:0;font-size:20px;font-weight:700;max-width:26ch;">Sprawdzamy dostępność rozpoznawania {{ wVariantLabel }}…</h2>
+                  <p style="margin:0;max-width:40ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">To krótka, automatyczna kontrola — bez udziału mikrofonu.</p>
+                </sc-if>
+                <sc-if value="{{ wAvailAvailable }}" hint-placeholder-val="{{ false }}">
+                  <div data-testid="availability-available" style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
+                  <h2 style="margin:0;font-size:20px;font-weight:700;max-width:28ch;">Rozpoznawanie {{ wVariantLabel }} jest już dostępne</h2>
+                  <p style="margin:0;max-width:40ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Potwierdzono automatycznie — nie musisz nic mówić.</p>
+                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Kontynuuj</button>
+                </sc-if>
+                <sc-if value="{{ wAvailUnavailable }}" hint-placeholder-val="{{ false }}">
+                  <div data-testid="availability-unavailable" style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 45);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(55% 0.10 45);" aria-hidden="true">!</div>
+                  <h2 style="margin:0;font-size:20px;font-weight:700;max-width:30ch;">Nie możemy potwierdzić dostępności rozpoznawania {{ wVariantLabel }}</h2>
+                  <p style="margin:0;max-width:40ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Sprawdzimy to krótką próbą mowy.</p>
+                  <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
+                  </sc-if>
+                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Sprawdź mową</button>
+                </sc-if>
+              </sc-if>
+
+              <sc-if value="{{ wIsSttIntro }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">ROZPOZNAWANIE MOWY — {{ wVariantLabelUpper }}</div>
+                <h2 style="margin:0;font-size:22px;font-weight:700;max-width:26ch;">Sprawdzimy teraz rozpoznawanie angielskiej mowy</h2>
+                <p style="margin:0;max-width:40ch;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">Poprosimy Cię o przeczytanie krótkiego zdania na głos.</p>
+                <button data-testid="speech-check-start" onClick="{{ wStartStt }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij próbę rozpoznawania</button>
+              </sc-if>
+
+              <sc-if value="{{ wIsSttActive }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">SŁUCHAM — {{ wVariantLabelUpper }}</div>
+                <p style="margin:0;font-size:14.5px;color:oklch(40% 0.015 260);">Powiedz teraz po angielsku:</p>
+                <div data-testid="stt-phrase" style="max-width:48ch;font-size:clamp(24px,3.4vw,32px);font-weight:700;line-height:1.3;font-family:'Lora',serif;color:oklch(24% 0.015 260);">"{{ wPhrase }}"</div>
+                <div data-testid="speech-icon" style="width:64px;height:64px;border-radius:50%;background:oklch(60% 0.13 25);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(99% 0.005 75);animation:vt-pulse 1.6s infinite;margin-top:4px;" aria-label="Nagrywanie aktywne">🎙</div>
+                <div data-testid="speech-meter" style="display:flex;align-items:flex-end;gap:4px;height:36px;" aria-hidden="true">
+                  <sc-for list="{{ wLevels }}" as="lvl" hint-placeholder-count="20">
+                    <div style="width:5px;border-radius:3px;background:oklch(46% 0.06 200);height:{{ lvl.h }}px;transition:height .12s ease;"></div>
+                  </sc-for>
+                </div>
+                <div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;">{{ wRecTime }}</div>
+                <button data-testid="speech-check-stop" onClick="{{ wStopStt }}" style="all:unset;cursor:pointer;margin-top:2px;padding:14px 28px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ nagrywanie</button>
+              </sc-if>
+
+              <sc-if value="{{ wIsSttResult }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ wResultSuccess }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
+                  <h2 style="margin:0;font-size:21px;font-weight:700;">Rozpoznawanie mowy działa poprawnie.</h2>
+                  <div data-testid="stt-recognized-text" style="font-size:13.5px;color:oklch(45% 0.015 260);max-width:44ch;">Rozpoznano: „{{ wRecognized }}”</div>
+                  <button data-testid="speech-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:8px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Przejdź dalej</button>
+                </sc-if>
+                <sc-if value="{{ wResultMismatch }}" hint-placeholder-val="{{ false }}">
+                  <div style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 45);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(55% 0.10 45);" aria-hidden="true">!</div>
+                  <h2 style="margin:0;font-size:21px;font-weight:700;">Rozpoznano inną wypowiedź.</h2>
+                  <div style="max-width:46ch;text-align:left;font-size:13.5px;line-height:1.7;background:oklch(97% 0.008 75);border-radius:12px;padding:14px 18px;">
+                    <div><strong>Oczekiwano:</strong> {{ wPhrase }}</div>
+                    <div data-testid="stt-recognized-text"><strong>Rozpoznano:</strong> {{ wRecognized }}</div>
+                  </div>
+                  <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
+                  </sc-if>
+                  <button data-testid="speech-check-retry" onClick="{{ wRetrySttSameStep }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Powtórz próbę</button>
+                </sc-if>
+              </sc-if>
+
+              <sc-if value="{{ wIsVoice }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ wVoiceMissing }}" hint-placeholder-val="{{ false }}">
+                  <div data-testid="voice-error-missing" style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 40);display:flex;align-items:center;justify-content:center;font-size:26px;" aria-hidden="true">🔊</div>
+                  <h2 style="margin:0;font-size:20px;font-weight:700;max-width:26ch;">Nie masz jeszcze wysokiej jakości głosu {{ wGenderLabel }} {{ wVariantLabel }}</h2>
+                  <p style="margin:0;max-width:44ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Pobierz głos Enhanced lub Premium, aby tutor brzmiał naturalniej.</p>
+                  <button data-testid="open-voice-settings" onClick="{{ wFixVoice }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Otwórz ustawienia głosów</button>
+                </sc-if>
+                <sc-if value="{{ !wVoiceMissing }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">GŁOS {{ wGenderLabelUpper }} — {{ wVariantLabelUpper }}</div>
+                  <h2 style="margin:0 0 6px;font-size:21px;font-weight:700;max-width:30ch;">Wybierz głos {{ wGenderLabel }} dla {{ wVariantLabel }}</h2>
+                  <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;margin-top:4px;">
+                    <sc-for list="{{ wVoiceList }}" as="v" hint-placeholder-count="3">
+                      <button data-testid="voice-option-{{ v.id }}" onClick="{{ v.pick }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid {{ v.border }};background:{{ v.bg }};text-align:left;">
+                        <span style="width:18px;height:18px;border-radius:50%;border:2px solid {{ v.radioBorder }};background:{{ v.radioFill }};flex:none;" aria-hidden="true"></span>
+                        <span style="flex:1;">
+                          <div style="font-size:14.5px;font-weight:700;">{{ v.name }}</div>
+                          <div style="font-size:11.5px;color:oklch(50% 0.015 260);">{{ v.qualityLabel }}</div>
+                        </span>
+                        <sc-if value="{{ v.recommended }}" hint-placeholder-val="{{ false }}">
+                          <span style="font-size:10.5px;font-weight:700;color:oklch(50% 0.10 45);background:oklch(95% 0.03 45);padding:4px 9px;border-radius:100px;">Rekomendowany</span>
+                        </sc-if>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:center;margin-top:2px;">
+                    <button data-testid="voice-listen-sample" onClick="{{ wListen }}" style="all:unset;cursor:pointer;padding:11px 20px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:13.5px;font-weight:600;color:oklch(40% 0.015 260);">▶ Odsłuchaj próbkę</button>
+                    <sc-if value="{{ wListened }}" hint-placeholder-val="{{ false }}">
+                      <span role="status" aria-live="polite" style="font-size:12.5px;color:oklch(45% 0.10 150);font-weight:600;">✓ Odsłuchano</span>
+                    </sc-if>
+                  </div>
+                  <button data-testid="voice-confirm" onClick="{{ wConfirmVoice }}" disabled="{{ wConfirmDisabled }}" style="all:unset;cursor:pointer;margin-top:8px;padding:15px 32px;border-radius:100px;background:{{ wConfirmBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;opacity:{{ wConfirmOpacity }};">Ten głos mi odpowiada</button>
+                </sc-if>
+              </sc-if>
+
+              <sc-if value="{{ wIsSummary }}" hint-placeholder-val="{{ false }}">
+                <h2 style="margin:0 0 4px;font-size:23px;font-weight:700;">{{ wSummaryTitle }}</h2>
+                <p style="margin:0 0 8px;font-size:14px;color:oklch(45% 0.015 260);max-width:44ch;">{{ wSummarySubtitle }}</p>
+                <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:480px;text-align:left;">
+                  <sc-for list="{{ wChecklist }}" as="item" hint-placeholder-count="4">
+                    <div data-testid="summary-item-{{ item.key }}" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:oklch(98% 0.006 75);border:1px solid oklch(91% 0.012 75);">
+                      <span style="width:22px;height:22px;border-radius:50%;background:{{ item.dotBg }};color:{{ item.dotColor }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;">{{ item.mark }}</span>
+                      <span style="flex:1;font-size:13.5px;">
+                        <div style="font-weight:600;">{{ item.title }}</div>
+                        <div style="font-size:12px;color:oklch(50% 0.015 260);">{{ item.detail }}</div>
+                      </span>
+                    </div>
+                  </sc-for>
+                </div>
+                <button data-testid="setup-finish" onClick="{{ wFinish }}" style="all:unset;cursor:pointer;margin-top:10px;padding:16px 36px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;">{{ wFinishLabel }}</button>
+              </sc-if>
+
+              <sc-if value="{{ wHasDemoOptions }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:18px;border:1px dashed oklch(80% 0.02 260);border-radius:12px;padding:10px 14px;max-width:480px;">
+                  <button data-testid="demo-toggle" onClick="{{ wToggleDemo }}" style="all:unset;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:.06em;color:oklch(60% 0.012 260);font-family:monospace;">TRYB DEMO — WARIANTY ▾</button>
+                  <sc-if value="{{ wDemoOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                      <sc-for list="{{ wDemoOptions }}" as="opt" hint-placeholder-count="3">
+                        <button data-testid="demo-option-{{ opt.testid }}" onClick="{{ opt.action }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:11px;color:{{ opt.textColor }};background:{{ opt.bg }};padding:6px 10px;border-radius:100px;border:1.5px solid {{ opt.border }};">
+                          <span style="width:7px;height:7px;border-radius:50%;background:{{ opt.dotColor }};flex:none;" aria-hidden="true"></span>
+                          {{ opt.label }}
+                          <sc-if value="{{ opt.active }}" hint-placeholder-val="{{ false }}">
+                            <span style="font-size:9.5px;font-weight:700;color:oklch(46% 0.06 200);">✓ Wybrano</span>
+                          </sc-if>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;animation:vt-fade .5s ease;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px clamp(20px,4vw,48px);border-bottom:1px solid oklch(92% 0.01 75);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <image-slot id="{{ selChar.photoId }}" shape="circle" src="{{ selChar.photoSrc }}" placeholder="{{ selChar.photoPlaceholder }}" style="width:42px;height:42px;border-radius:50%;flex:none;"></image-slot>
+              <div>
+                <div style="font-size:15px;font-weight:700;">{{ selChar.name }}</div>
+                <div style="font-size:12.5px;color:oklch(50% 0.015 260);">{{ selChar.style }} · Głos {{ selChar.genderLabel }} · {{ currentVariantLabel }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ wShowNewConversation }}" hint-placeholder-val="{{ false }}">
+              <div style="position:relative;flex:none;">
+                <button data-testid="new-conversation-button" onClick="{{ toggleNewConvoConfirm }}" style="all:unset;cursor:pointer;font-size:12.5px;font-weight:600;color:oklch(50% 0.015 260);padding:8px 14px;border-radius:100px;border:1px solid oklch(88% 0.012 75);white-space:nowrap;" style-hover="background:oklch(96% 0.008 75);color:oklch(40% 0.015 260);">
+                  ＋ Nowa rozmowa
+                </button>
+                <sc-if value="{{ newConvoConfirmOpen }}" hint-placeholder-val="{{ false }}">
+                  <div data-testid="new-conversation-confirm" style="position:absolute;top:100%;right:0;margin-top:8px;background:oklch(99% 0.006 75);border:1px solid oklch(90% 0.012 75);border-radius:16px;box-shadow:0 14px 30px -10px oklch(30% 0.02 260 / 0.25);padding:18px;width:290px;z-index:10;text-align:left;">
+                    <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Zacząć nową rozmowę z {{ selChar.name }}?</div>
+                    <div style="font-size:12.5px;line-height:1.6;color:oklch(45% 0.015 260);margin-bottom:8px;">Bieżąca rozmowa zostanie zakończona. Zacznie się pusta rozmowa z tym samym tutorem — poprzednie wiadomości pozostają zapisane w danych aplikacji.</div>
+                    <sc-if value="{{ wChatInFlightWarning }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:12px;font-weight:600;color:oklch(50% 0.10 45);background:oklch(96% 0.03 45);padding:8px 10px;border-radius:10px;margin-bottom:10px;">⚠ Tutor właśnie przygotowuje odpowiedź — zostanie przerwana.</div>
+                    </sc-if>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;">
+                      <button data-testid="new-conversation-cancel" onClick="{{ cancelNewConvo }}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:600;color:oklch(40% 0.015 260);" style-hover="background:oklch(96% 0.008 75);">Anuluj</button>
+                      <button data-testid="new-conversation-confirm-action" onClick="{{ confirmNewConvo }}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:100px;font-size:13px;font-weight:700;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);" style-hover="background:oklch(40% 0.06 200);">Zacznij nową rozmowę</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="flex:1;padding:clamp(20px,3vw,40px) clamp(20px,4vw,48px);display:flex;flex-direction:column;gap:16px;overflow:auto;">
+            <div style="max-width:64ch;background:oklch(95% 0.015 200);border-radius:18px 18px 18px 4px;padding:14px 18px;font-size:15px;line-height:1.55;align-self:flex-start;">{{ selChar.greeting }}</div>
+
+            <sc-if value="{{ chatHasUserMsg }}" hint-placeholder-val="{{ false }}">
+              <div style="max-width:64ch;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);border-radius:18px 18px 4px 18px;padding:14px 18px;font-size:15px;line-height:1.55;align-self:flex-end;">{{ selChar.mistake }}</div>
+            </sc-if>
+
+            <sc-if value="{{ chatIsTyping }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-start;display:flex;gap:5px;padding:14px 18px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:oklch(70% 0.01 260);animation:vt-dot 1.2s infinite;"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:oklch(70% 0.01 260);animation:vt-dot 1.2s infinite .15s;"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:oklch(70% 0.01 260);animation:vt-dot 1.2s infinite .3s;"></div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ chatHasReply }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;animation:vt-fade .4s ease;">
+                <div style="max-width:64ch;background:oklch(95% 0.015 200);border-radius:18px 18px 18px 4px;padding:14px 18px;font-size:15px;line-height:1.55;">{{ selChar.reply }}</div>
+
+                <div style="max-width:64ch;width:100%;background:oklch(97% 0.03 45);border:1px solid oklch(88% 0.05 45);border-radius:14px;overflow:hidden;">
+                  <button onClick="{{ toggleCorrection }}" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;padding:10px 16px;">
+                    <span style="font-size:12.5px;font-weight:700;color:oklch(50% 0.10 45);letter-spacing:.02em;">✎ Mała korekta</span>
+                    <span style="font-size:13px;color:oklch(50% 0.10 45);">{{ correctionArrow }}</span>
+                  </button>
+                  <sc-if value="{{ correctionOpen }}" hint-placeholder-val="{{ true }}">
+                    <div style="padding:2px 16px 16px;font-size:14px;line-height:1.6;">
+                      <div style="margin-bottom:6px;"><span style="text-decoration:line-through;color:oklch(55% 0.02 260);">{{ selChar.wrong }}</span> → <span style="font-weight:700;color:oklch(40% 0.06 200);">{{ selChar.right }}</span></div>
+                      <div style="color:oklch(45% 0.015 260);">{{ selChar.explanation }}</div>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <div data-testid="dialect-note" style="max-width:64ch;width:100%;background:oklch(96% 0.015 220);border:1px solid oklch(87% 0.02 220);border-radius:14px;padding:12px 16px;">
+                  <div style="font-size:12.5px;font-weight:700;color:oklch(45% 0.05 220);letter-spacing:.02em;margin-bottom:4px;">🌍 Różnica w wariancie — nie błąd</div>
+                  <div style="font-size:13.5px;line-height:1.6;color:oklch(35% 0.02 260);">{{ dialectNoteText }}</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ hasVariantNote }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin:4px 0;">
+                <div style="flex:1;height:1px;background:oklch(90% 0.012 75);"></div>
+                <div data-testid="variant-switch-note" style="font-size:11.5px;font-weight:600;color:oklch(50% 0.015 260);background:oklch(96% 0.008 75);padding:5px 12px;border-radius:100px;white-space:nowrap;">Od teraz: {{ variantNoteLabel }}</div>
+                <div style="flex:1;height:1px;background:oklch(90% 0.012 75);"></div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="padding:18px clamp(20px,4vw,48px);border-top:1px solid oklch(92% 0.01 75);display:flex;gap:12px;align-items:center;">
+            <sc-if value="{{ chatStepIsInput }}" hint-placeholder-val="{{ true }}">
+              <div style="flex:1;background:oklch(96% 0.008 75);border:1px solid oklch(90% 0.012 75);border-radius:100px;padding:13px 20px;font-size:15px;color:{{ chatInputColor }};">{{ chatInputDisplay }}</div>
+              <button data-testid="chat-send" onClick="{{ sendMessage }}" style="all:unset;cursor:pointer;padding:13px 26px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Wyślij</button>
+            </sc-if>
+            <sc-if value="{{ chatHasUserMsg }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;font-size:13.5px;color:oklch(55% 0.015 260);font-style:italic;">Wiadomość wysłana</div>
+              <button data-testid="chat-finish" onClick="{{ finishConversation }}" disabled="{{ finishDisabled }}" style="all:unset;cursor:pointer;padding:13px 26px;border-radius:100px;background:{{ finishBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;opacity:{{ finishOpacity }};">Zakończ rozmowę</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(24px,6vw,72px);gap:22px;animation:vt-fade .5s ease;">
+          <div style="width:64px;height:64px;border-radius:50%;background:oklch(93% 0.02 200);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(46% 0.06 200);">↗</div>
+          <h2 style="margin:0;font-size:clamp(21px,2.6vw,27px);font-weight:700;max-width:18ch;">Dobra rozmowa!</h2>
+          <p style="margin:0;max-width:42ch;font-size:15.5px;line-height:1.6;color:oklch(45% 0.015 260);">{{ selChar.progress }}</p>
+          <div style="display:flex;gap:10px;margin-top:6px;">
+            <div style="width:34px;height:6px;border-radius:100px;background:oklch(46% 0.06 200);"></div>
+            <div style="width:34px;height:6px;border-radius:100px;background:oklch(46% 0.06 200);"></div>
+            <div style="width:34px;height:6px;border-radius:100px;background:oklch(88% 0.015 200);"></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:14px;">
+            <button data-testid="progress-change-tutor" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;padding:14px 26px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:14.5px;font-weight:600;color:oklch(40% 0.015 260);">Zmień tutora</button>
+            <button data-testid="progress-continue" onClick="{{ continueChat }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Kontynuuj rozmowę</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+// ---- Shared visual tokens ----
+const TOKENS = {
+  primary: 'oklch(46% 0.06 200)', primaryHover: 'oklch(40% 0.06 200)', primarySoft: 'oklch(95% 0.015 200)',
+  primaryTint: 'oklch(95% 0.02 200)', primarySelected: 'oklch(96% 0.02 200)',
+  ink: 'oklch(24% 0.015 260)', inkMuted: 'oklch(45% 0.015 260)', inkFaint: 'oklch(50% 0.015 260)', inkSubtle: 'oklch(60% 0.012 260)', inkOnDark: 'oklch(70% 0.012 260)',
+  border: 'oklch(90% 0.012 75)', borderStrong: 'oklch(88% 0.012 75)', radioBorder: 'oklch(80% 0.012 260)',
+  accent: 'oklch(50% 0.10 45)', accentSoft: 'oklch(95% 0.03 45)',
+  success: 'oklch(45% 0.10 150)', successSoft: 'oklch(90% 0.05 150)',
+  white: 'oklch(99% 0.005 75)', disabled: 'oklch(80% 0.02 200)', neutralDot: 'oklch(92% 0.008 75)'
+};
+
+// Characters no longer carry a language variant — that is now a single global setting
+// (see appConfig.variant). Personality/style stay as the sole differentiators.
+const CHARACTERS = [
+  { id: 0, name: 'Maria Skłodowska-Curie', photoId: 'photo-curie', photoPlaceholder: 'Zdjęcie: Maria Skłodowska-Curie', photoSrc: './assets/curie.png',
+    gender: 'F',
+    personality: 'Ciepła i cierpliwa — lubi swobodne pogawędki o codziennych sprawach.', style: 'Swobodne rozmowy',
+    greeting: 'Hi! I love hearing about people\u2019s day. What did you do yesterday?',
+    mistake: 'Yesterday I go to the park with my sister.', wrong: 'I go', right: 'I went',
+    explanation: 'Mówiąc o wczoraj, użyj czasu przeszłego: went zamiast go.',
+    reply: 'Nice! I love parks too \u2014 what did you two do there together?',
+    progress: 'Dziś dobrze radziłeś sobie z czasem przeszłym. Twoje zdania o wydarzeniach z przeszłości stają się coraz pewniejsze.' },
+  { id: 1, name: 'Leonardo da Vinci', photoId: 'photo-davinci', photoPlaceholder: 'Zdjęcie: Leonardo da Vinci', photoSrc: './assets/davinci.png',
+    gender: 'M',
+    personality: 'Energiczny i ciekawy świata — prowadzi żywe rozmowy pełne pytań.', style: 'Szybkie, żywe dialogi',
+    greeting: 'Hey! Quick one \u2014 do you agree that mornings are the best part of the day?',
+    mistake: 'I am agree with you, it\u2019s a good idea.', wrong: 'I am agree', right: 'I agree',
+    explanation: '„Agree” to czasownik — nie potrzebuje „am” przed sobą.',
+    reply: 'Glad we\u2019re on the same page! What made you think of that?',
+    progress: 'Coraz rzadziej dodajesz „am” przed czasownikami takimi jak agree czy think — to spory postęp!' },
+  { id: 2, name: 'Konfucjusz', photoId: 'photo-confucius', photoPlaceholder: 'Zdjęcie: Konfucjusz', photoSrc: './assets/confucius.png',
+    gender: 'M',
+    personality: 'Spokojny i metodyczny — cierpliwie tłumaczy zasady krok po kroku.', style: 'Dokładne wyjaśnienia',
+    greeting: 'Good morning! Tell me about someone close to you \u2014 what do they like?',
+    mistake: 'She don\u2019t like coffee in the morning.', wrong: 'don\u2019t', right: 'doesn\u2019t',
+    explanation: 'Przy „she/he/it” w czasie teraźniejszym używamy „doesn\u2019t”, nie „don\u2019t”.',
+    reply: 'That\u2019s good to know \u2014 what does she prefer instead, tea?',
+    progress: 'Budujesz coraz poprawniejsze zdania z „he/she/it” w czasie teraźniejszym. Widać wyraźną poprawę.' },
+  { id: 3, name: 'William Shakespeare', photoId: 'photo-shakespeare', photoPlaceholder: 'Zdjęcie: William Shakespeare', photoSrc: './assets/shakespeare.png',
+    gender: 'M',
+    personality: 'Poetycki i pełen humoru — uwielbia bawić się słowami i historiami.', style: 'Kreatywne opowieści',
+    greeting: 'Good day! Tell me of a story that once made you laugh.',
+    mistake: 'Yesterday I laughed so much, I almost cries.', wrong: 'cries', right: 'cried',
+    explanation: 'Po „almost” w czasie przeszłym używamy formy przeszłej: cried, nie cries.',
+    reply: 'What a delight! Tell me more of this story\u2019s ending.',
+    progress: 'Twoje zdania łączące uczucia i wydarzenia z przeszłości brzmią coraz naturalniej.' },
+  { id: 4, name: 'Ada Lovelace', photoId: 'photo-lovelace', photoPlaceholder: 'Zdjęcie: Ada Lovelace', photoSrc: './assets/lovelace.png',
+    gender: 'F',
+    personality: 'Precyzyjna i wnikliwa — lubi rozkładać myśli na czynniki pierwsze.', style: 'Logiczne rozmowy krok po kroku',
+    greeting: 'Hello! What is something you are curious to learn about?',
+    mistake: 'I want to learning more about music.', wrong: 'to learning', right: 'to learn',
+    explanation: 'Po „want to” używamy formy podstawowej czasownika: learn, nie learning.',
+    reply: 'A fine choice \u2014 what kind of music draws your curiosity?',
+    progress: 'Coraz rzadziej mylisz formy czasownika po „want to” — świetna konsekwencja.' },
+  { id: 5, name: 'Fryderyk Chopin', photoId: 'photo-chopin', photoPlaceholder: 'Zdjęcie: Fryderyk Chopin', photoSrc: './assets/chopin.png',
+    gender: 'M',
+    personality: 'Wrażliwy i refleksyjny — prowadzi rozmowy o emocjach i sztuce.', style: 'Powolne, nastrojowe dialogi',
+    greeting: 'Good evening. What kind of music makes you feel calm?',
+    mistake: 'When I listen music, I feel very peaceful.', wrong: 'listen music', right: 'listen to music',
+    explanation: 'Czasownik „listen” zwykle łączy się z „to”: listen to music.',
+    reply: 'Beautifully said \u2014 what else brings you that peace?',
+    progress: 'Coraz pewniej łączysz „listen” z „to” — to niewielka, ale ważna zmiana.' },
+  { id: 6, name: 'Kleopatra', photoId: 'photo-cleopatra', photoPlaceholder: 'Zdjęcie: Kleopatra', photoSrc: './assets/cleopatra.png',
+    gender: 'F',
+    personality: 'Pewna siebie i błyskotliwa — prowadzi rozmowy z wyczuciem stylu.', style: 'Swobodne, pewne dialogi',
+    greeting: 'Greetings! Tell me, what makes a good leader in your opinion?',
+    mistake: 'A good leader must to listen to people.', wrong: 'must to listen', right: 'must listen',
+    explanation: 'Po czasowniku modalnym „must” nie dodajemy „to”: must listen.',
+    reply: 'Wise words \u2014 what else do you think a leader needs?',
+    progress: 'Coraz rzadziej dodajesz „to” po czasownikach modalnych takich jak must czy can.' },
+  { id: 7, name: 'Mikołaj Kopernik', photoId: 'photo-copernicus', photoPlaceholder: 'Zdjęcie: Mikołaj Kopernik', photoSrc: './assets/copernicus.png',
+    gender: 'M',
+    personality: 'Dociekliwy i spokojny — zadaje pytania, które skłaniają do myślenia.', style: 'Rozmowy oparte na pytaniach',
+    greeting: 'Good day! What is something you once believed, but changed your mind about?',
+    mistake: 'Before, I was thinking the Earth is flat, ha ha.', wrong: 'is flat', right: 'was flat',
+    explanation: 'Mówiąc o przeszłym przekonaniu, oba czasowniki powinny być w czasie przeszłym: was flat.',
+    reply: 'A fascinating change of mind \u2014 what convinced you otherwise?',
+    progress: 'Twoje zdania o przeszłych przekonaniach są coraz bardziej spójne czasowo.' },
+  { id: 8, name: 'Jane Austen', photoId: 'photo-austen', photoPlaceholder: 'Zdjęcie: Jane Austen', photoSrc: './assets/austen.png',
+    gender: 'F',
+    personality: 'Dowcipna i uważna — lubi subtelne obserwacje o ludziach.', style: 'Lekkie, towarzyskie pogawędki',
+    greeting: 'Good afternoon! What do you enjoy noticing about people?',
+    mistake: 'She always speak very politely to everyone.', wrong: 'she speak', right: 'she speaks',
+    explanation: 'Przy „she/he/it” w czasie teraźniejszym dodajemy „-s”: speaks.',
+    reply: 'How lovely \u2014 does she speak that way even when she disagrees?',
+    progress: 'Coraz rzadziej pomijasz końcówkę „-s” przy „he/she/it” — to wyraźny postęp.' }
+];
+
+const PHRASE = 'Hello, I want to practice English today.';
+const MISMATCH_TEXT = 'Hello, I want to practice in English today';
+function normalizeForMatch(text) { return text.toLowerCase().replace(/[.,!?;:'"]/g, '').replace(/\s+/g, ' ').trim(); }
+function isPhraseMatch(a, b) { return normalizeForMatch(a) === normalizeForMatch(b); }
+
+const VOICES = {
+  US: {
+    F: [{ id: 'us-f-ava', name: 'Ava', quality: 'Premium' }, { id: 'us-f-samantha', name: 'Samantha', quality: 'Enhanced' }, { id: 'us-f-susan', name: 'Susan', quality: 'Standard' }],
+    M: [{ id: 'us-m-evan', name: 'Evan', quality: 'Premium' }, { id: 'us-m-alex', name: 'Alex', quality: 'Enhanced' }, { id: 'us-m-fred', name: 'Fred', quality: 'Standard' }]
+  },
+  UK: {
+    F: [{ id: 'uk-f-kate', name: 'Kate', quality: 'Enhanced' }, { id: 'uk-f-serena', name: 'Serena', quality: 'Standard' }],
+    M: [{ id: 'uk-m-daniel', name: 'Daniel', quality: 'Enhanced' }, { id: 'uk-m-arthur', name: 'Arthur', quality: 'Standard' }]
+  }
+};
+const Q_RANK = { Premium: 3, Enhanced: 2, Standard: 1 };
+const VARIANT_LABEL = { US: 'English US', UK: 'English UK' };
+
+// Shared error-panel definitions — one generic renderer, 8 deterministic variants.
+const ERROR_DEFS = {
+  micPermission: { title: 'Brak dostępu do mikrofonu', body: 'Aby sprawdzić mikrofon, aplikacja potrzebuje zgody na dostęp do niego w ustawieniach prywatności systemu.', actionLabel: 'Otwórz dostęp do mikrofonu', stage: 'intro', check: 'mic', kind: 'settings', testid: 'mic-error-permission', actionTestid: 'open-microphone-settings' },
+  deviceUnsupported: { title: 'To urządzenie nie obsługuje tej funkcji', body: 'Rozpoznawanie mowy wymaga nowszej wersji systemu operacyjnego lub innego wejścia audio.', actionLabel: 'Sprawdź ponownie', stage: 'intro', check: 'mic', kind: 'retry', testid: 'mic-error-unsupported-device', actionTestid: 'retry-check' },
+  sttPermission: { title: 'Brak dostępu do rozpoznawania mowy', body: 'System potrzebuje osobnej zgody na korzystanie z rozpoznawania mowy w tej aplikacji.', actionLabel: 'Otwórz ustawienia rozpoznawania mowy', stage: 'intro', check: 'stt', kind: 'settings', testid: 'stt-error-permission', actionTestid: 'open-speech-settings' },
+  sttNoModel: { title: '', body: '', actionLabel: '', stage: 'intro', check: 'stt', kind: 'settings', testid: 'stt-error-language-model', actionTestid: 'download-language-pack' },
+  micNoSignal: { title: 'Nie wykrywam głosu', body: 'Sprawdź, czy mikrofon jest podłączony i niewyciszony, a następnie spróbuj ponownie.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'mic', kind: 'retry', testid: 'mic-error-no-signal', actionTestid: 'retry-check' },
+  sttEmpty: { title: 'Rozpoznawanie nie zwróciło wyniku', body: 'Nie udało się uchwycić żadnej wypowiedzi. Przeczytaj zdanie jeszcze raz, trochę głośniej.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-empty', actionTestid: 'retry-check' },
+  sttUnavailable: { title: 'Rozpoznawanie mowy jest chwilowo niedostępne', body: 'Usługa nie odpowiada. Spróbuj ponownie za chwilę.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-unavailable', actionTestid: 'retry-check' },
+  sttUnknown: { title: 'Coś poszło nie tak', body: 'Nie udało się dokończyć próby z nieznanego powodu. Spróbuj ponownie.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-unknown', actionTestid: 'retry-check' }
+};
+
+const DEMO_LABELS = {
+  micPermission: 'Brak dostępu do mikrofonu', deviceUnsupported: 'Urządzenie nieobsługiwane', micNoSignal: 'Nie wykrywam głosu',
+  sttPermission: 'Brak dostępu do rozpoznawania mowy', sttNoModel: 'Brak pobranego modelu językowego', sttEmpty: 'Pusty wynik rozpoznawania',
+  sttUnavailable: 'Usługa chwilowo niedostępna', sttUnknown: 'Nieznany błąd', mismatch: 'Rozpoznano inną wypowiedź',
+  voiceMissing: 'Brak odpowiedniego głosu', availabilityAvailable: 'Wymuszono: dostępne', availabilityUnavailable: 'Wymuszono: niedostępne'
+};
+
+const GROUP_OF = (item) => item.kind === 'voice' ? ('voice-' + item.gender)
+  : (item.kind === 'micIntro' || item.kind === 'micActive' || item.kind === 'micResult') ? 'mic'
+  : (item.kind === 'sttAvailability' || item.kind === 'sttIntro' || item.kind === 'sttActive' || item.kind === 'sttResult') ? 'stt'
+  : item.kind;
+const GROUP_LABEL = { chooseVariant: 'Wariant', mic: 'Mikrofon', stt: 'Rozpoznawanie mowy', 'voice-F': 'Głos kobiecy', 'voice-M': 'Głos męski', summary: 'Podsumowanie' };
+
+function freshWizardBase() {
+  return {
+    plan: [], step: 0, variant: null, isSwitch: false, returnTo: null,
+    errorKind: null, waiting: false, forceMismatch: false, demoOpen: false,
+    micElapsed: 0, micLevels: new Array(20).fill(6),
+    sttElapsed: 0, sttLevels: new Array(20).fill(6),
+    resultStatus: null,
+    availabilityStatus: 'idle', availabilityForce: null,
+    voiceStepSelectedId: null, voiceStepListened: false,
+    voiceMissing: {}
+  };
+}
+function onboardingPlan() {
+  return [
+    { kind: 'chooseVariant' }, { kind: 'micIntro' }, { kind: 'micActive' }, { kind: 'micResult' },
+    { kind: 'sttIntro' }, { kind: 'sttActive' }, { kind: 'sttResult' },
+    { kind: 'voice', gender: 'F' }, { kind: 'voice', gender: 'M' }, { kind: 'summary' }
+  ];
+}
+function switchPlan(target, appConfig) {
+  const steps = [];
+  if (!appConfig.sttDone[target]) steps.push({ kind: 'sttAvailability' });
+  if (!appConfig.voices[target + '_F']) steps.push({ kind: 'voice', gender: 'F' });
+  if (!appConfig.voices[target + '_M']) steps.push({ kind: 'voice', gender: 'M' });
+  steps.push({ kind: 'summary' });
+  return steps;
+}
+
+class Component extends DCLogic {
+  state = {
+    screen: 'welcome', selectedIdx: 0, chatStep: 0, correctionOpen: true, chatFreshStart: false,
+    savedOrder: [], pendingCharIdx: null,
+    variantPopoverOpen: false, chatVariantNote: null,
+    chatOpenedViaContinue: false, newConvoConfirmOpen: false,
+    // Global, tutor-independent learning-variant configuration. `variant` is the ACTIVE
+    // one; the other may or may not be configured yet — see switchPlan().
+    appConfig: {
+      variant: null, micDone: false,
+      sttDone: { US: false, UK: false },
+      voices: { US_F: null, US_M: null, UK_F: null, UK_M: null }
+    },
+    wizard: freshWizardBase()
+  };
+
+  componentDidMount() {
+    window.__vtDebug = {
+      getState: () => this.state,
+      setState: (p) => this.setState(p),
+      goToWizardState: (kind, extra, plan) => {
+        const usedPlan = plan || onboardingPlan();
+        const step = usedPlan.findIndex(s => s.kind === kind);
+        this.setState({ screen: 'wizard', wizard: { ...freshWizardBase(), plan: usedPlan, step: Math.max(step, 0), variant: 'US', ...(extra || {}) } });
+      }
+    };
+  }
+
+  goToCharacters = () => this.setState({ screen: 'characters' });
+
+  startNewConversation = (idx) => {
+    const cfg = this.state.appConfig;
+    if (cfg.variant === null) {
+      this.setState({ screen: 'wizard', pendingCharIdx: idx, wizard: { ...freshWizardBase(), plan: onboardingPlan() } });
+      return;
+    }
+    this.setState({ screen: 'chat', selectedIdx: idx, chatStep: 0, correctionOpen: true, chatVariantNote: null, chatOpenedViaContinue: false, newConvoConfirmOpen: false, chatFreshStart: true });
+  };
+
+  // Continuing restores the tutor's saved conversation: the prior exchange (user message +
+  // tutor reply + correction) is shown as already-happened history, not a fresh input screen.
+  continueConversation = (idx) => this.setState({ screen: 'chat', selectedIdx: idx, chatStep: 2, correctionOpen: true, chatVariantNote: null, chatOpenedViaContinue: true, newConvoConfirmOpen: false, chatFreshStart: false });
+
+  toggleNewConvoConfirm = () => this.setState(s => ({ newConvoConfirmOpen: !s.newConvoConfirmOpen }));
+  cancelNewConvo = () => this.setState({ newConvoConfirmOpen: false });
+  confirmNewConvo = () => {
+    // Cancel any in-flight typing simulation — starting a new conversation interrupts it.
+    clearTimeout(this._t);
+    this.setState(s => ({
+      chatStep: 0, correctionOpen: true, chatVariantNote: null, chatOpenedViaContinue: false, newConvoConfirmOpen: false,
+      // The previous conversation is no longer the "Kontynuuj rozmowę" target for this tutor —
+      // it stays as saved history/data, but a fresh, empty conversation becomes current.
+      // chatFreshStart blanks the message input so no old/demo text lingers in the new conversation.
+      chatFreshStart: true,
+      savedOrder: s.savedOrder.filter(id => id !== s.selectedIdx)
+    }));
+  };
+
+  sendMessage = () => {
+    this.setState({ chatStep: 1, chatFreshStart: false });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.setState(s => ({ chatStep: 2, savedOrder: [s.selectedIdx, ...s.savedOrder.filter(id => id !== s.selectedIdx)] }));
+    }, 1000);
+  };
+  toggleCorrection = () => this.setState(s => ({ correctionOpen: !s.correctionOpen }));
+  finishConversation = () => { if (this.state.chatStep >= 2) this.setState({ screen: 'progress' }); };
+  continueChat = () => this.setState({ screen: 'chat', chatOpenedViaContinue: true });
+
+  toggleVariantPopover = () => this.setState(s => ({ variantPopoverOpen: !s.variantPopoverOpen }));
+
+  selectVariant = (target) => {
+    const s = this.state; const cfg = s.appConfig;
+    if (target === cfg.variant) { this.setState({ variantPopoverOpen: false }); return; }
+    const ready = cfg.sttDone[target] && cfg.voices[target + '_F'] && cfg.voices[target + '_M'];
+    if (ready) {
+      const noteNeeded = s.screen === 'chat' && s.chatStep >= 1;
+      this.setState({ appConfig: { ...cfg, variant: target }, variantPopoverOpen: false, chatVariantNote: noteNeeded ? target : null });
+      return;
+    }
+    const returnTo = { screen: s.screen, selectedIdx: s.selectedIdx, chatStep: s.chatStep, correctionOpen: s.correctionOpen, chatFreshStart: s.chatFreshStart };
+    const plan = switchPlan(target, cfg);
+    const startsOnAvailability = plan[0] && plan[0].kind === 'sttAvailability';
+    // A switch plan may start directly on the availability check (mic always done, STT
+    // missing) — set "checking" in the SAME setState as the wizard reset (not a follow-up
+    // wPatch) so it can't be overwritten by state-update ordering, then start the timer.
+    this.setState({
+      screen: 'wizard', variantPopoverOpen: false,
+      wizard: { ...freshWizardBase(), plan, step: 0, variant: target, isSwitch: true, returnTo, availabilityStatus: startsOnAvailability ? 'checking' : 'idle' }
+    });
+    if (startsOnAvailability) this.wStartAvailabilityCheck();
+  };
+
+  goBack = () => {
+    const s = this.state;
+    if (s.screen === 'wizard') {
+      clearInterval(this._micTimer); clearInterval(this._sttTimer); clearTimeout(this._availTimer);
+      const w = s.wizard;
+      if (w.step === 0) {
+        if (w.isSwitch && w.returnTo) { this.setState({ screen: w.returnTo.screen, selectedIdx: w.returnTo.selectedIdx, chatStep: w.returnTo.chatStep, correctionOpen: w.returnTo.correctionOpen, chatFreshStart: w.returnTo.chatFreshStart }); return; }
+        this.setState({ screen: 'characters' });
+        return;
+      }
+      this.wPatch({ step: w.step - 1, waiting: false });
+      return;
+    }
+    const map = { characters: 'welcome', chat: 'characters', progress: 'chat' };
+    this.setState(st => ({ screen: map[st.screen] || 'welcome' }));
+  };
+
+  wPatch = (patch) => this.setState(s => ({ wizard: { ...s.wizard, ...patch } }));
+
+  chooseVariantUS = () => this.wPatch({ variant: 'US', step: this.state.wizard.step + 1 });
+  chooseVariantUK = () => this.wPatch({ variant: 'UK', step: this.state.wizard.step + 1 });
+
+  wStartMic = () => {
+    clearInterval(this._micTimer);
+    this.wPatch({ step: this.state.wizard.step + 1, micElapsed: 0, micLevels: new Array(20).fill(6) });
+    this._micTimer = setInterval(() => {
+      this.setState(s => {
+        const levels = s.wizard.micLevels.slice(1); levels.push(6 + Math.random() * 34);
+        return { wizard: { ...s.wizard, micElapsed: s.wizard.micElapsed + 0.15, micLevels: levels } };
+      });
+    }, 150);
+  };
+  wStopMic = () => {
+    clearInterval(this._micTimer);
+    this.setState(s => ({ appConfig: { ...s.appConfig, micDone: true }, wizard: { ...s.wizard, step: s.wizard.step + 1 } }));
+  };
+
+  wStartStt = () => {
+    clearInterval(this._sttTimer);
+    this.wPatch({ step: this.state.wizard.step + 1, sttElapsed: 0, sttLevels: new Array(20).fill(6) });
+    this._sttTimer = setInterval(() => {
+      this.setState(s => {
+        const levels = s.wizard.sttLevels.slice(1); levels.push(6 + Math.random() * 34);
+        return { wizard: { ...s.wizard, sttElapsed: s.wizard.sttElapsed + 0.15, sttLevels: levels } };
+      });
+    }, 150);
+  };
+  wStopStt = () => {
+    clearInterval(this._sttTimer);
+    const w = this.state.wizard;
+    const hasResultError = w.errorKind && ERROR_DEFS[w.errorKind] && ERROR_DEFS[w.errorKind].check === 'stt' && ERROR_DEFS[w.errorKind].stage === 'result';
+    const status = w.forceMismatch ? 'mismatch' : (hasResultError ? 'error' : 'success');
+    if (status === 'success') {
+      this.setState(s => ({ appConfig: { ...s.appConfig, sttDone: { ...s.appConfig.sttDone, [w.variant]: true } }, wizard: { ...s.wizard, step: w.step + 1, resultStatus: status } }));
+      return;
+    }
+    this.wPatch({ step: w.step + 1, resultStatus: status });
+  };
+
+  wAdvance = () => this.wPatch({ step: this.state.wizard.step + 1, errorKind: null, forceMismatch: false, voiceStepListened: false, voiceStepSelectedId: null, demoOpen: false });
+  wRetrySttSameStep = () => this.wPatch({ step: this.state.wizard.step - 2, errorKind: null, forceMismatch: false });
+
+  wStartAvailabilityCheck = () => {
+    clearTimeout(this._availTimer);
+    this._availTimer = setTimeout(() => {
+      this.setState(s => {
+        const forced = s.wizard.availabilityForce;
+        const available = forced ? forced === 'available' : true;
+        if (available) {
+          return { appConfig: { ...s.appConfig, sttDone: { ...s.appConfig.sttDone, [s.wizard.variant]: true } }, wizard: { ...s.wizard, availabilityStatus: 'available' } };
+        }
+        return { wizard: { ...s.wizard, availabilityStatus: 'unavailable' } };
+      });
+    }, 1100);
+  };
+  wForceAvailability = (val) => {
+    clearTimeout(this._availTimer);
+    if (val === 'available') this.setState(s => ({ appConfig: { ...s.appConfig, sttDone: { ...s.appConfig.sttDone, [s.wizard.variant]: true } }, wizard: { ...s.wizard, availabilityForce: val, availabilityStatus: val } }));
+    else this.wPatch({ availabilityForce: val, availabilityStatus: val });
+  };
+  wAvailabilityContinue = () => {
+    const w = this.state.wizard;
+    if (w.availabilityStatus === 'available') { this.wPatch({ step: w.step + 1 }); return; }
+    const plan = w.plan.slice();
+    plan.splice(w.step + 1, 0, { kind: 'sttIntro' }, { kind: 'sttActive' }, { kind: 'sttResult' });
+    this.wPatch({ plan, step: w.step + 1, errorKind: null });
+  };
+
+  wSetDemoError = (kind) => this.wPatch({ errorKind: kind });
+  wSetDemoMismatch = () => this.wPatch({ forceMismatch: true });
+  wToggleDemo = () => this.wPatch({ demoOpen: !this.state.wizard.demoOpen });
+
+  wErrorAction = () => {
+    const w = this.state.wizard;
+    const def = ERROR_DEFS[w.errorKind];
+    if (!def) return;
+    if (def.kind === 'settings') { this.wPatch({ waiting: true }); return; }
+    const def2Back = def.stage === 'result';
+    this.wPatch({ errorKind: null, step: def2Back ? w.step - 2 : w.step });
+  };
+  wRecheck = () => this.wPatch({ waiting: false, errorKind: null });
+
+  wPickVoice = (id) => this.wPatch({ voiceStepSelectedId: id, voiceStepListened: false });
+  wListen = () => this.wPatch({ voiceStepListened: true });
+  wConfirmVoice = () => {
+    const s = this.state.wizard;
+    const item = s.plan[s.step];
+    const key = s.variant + '_' + item.gender;
+    const list = VOICES[s.variant][item.gender];
+    const chosenId = s.voiceStepSelectedId || list[0].id;
+    const chosen = list.find(v => v.id === chosenId);
+    this.setState(st => ({ appConfig: { ...st.appConfig, voices: { ...st.appConfig.voices, [key]: chosen } }, wizard: { ...st.wizard, step: s.step + 1, voiceStepListened: false, voiceStepSelectedId: null } }));
+  };
+  wSimNoVoice = () => {
+    const w = this.state.wizard; const item = w.plan[w.step];
+    const key = w.variant + '_' + item.gender;
+    this.wPatch({ voiceMissing: { ...w.voiceMissing, [key]: true } });
+  };
+  wFixVoice = () => {
+    const w = this.state.wizard; const item = w.plan[w.step];
+    const key = w.variant + '_' + item.gender;
+    this.wPatch({ voiceMissing: { ...w.voiceMissing, [key]: false } });
+  };
+
+  wFinish = () => {
+    const s = this.state; const w = s.wizard;
+    if (w.isSwitch && w.returnTo) {
+      const rt = w.returnTo;
+      const noteNeeded = rt.screen === 'chat' && rt.chatStep >= 1;
+      this.setState({ appConfig: { ...s.appConfig, variant: w.variant }, screen: rt.screen, selectedIdx: rt.selectedIdx, chatStep: rt.chatStep, correctionOpen: rt.correctionOpen, chatFreshStart: rt.chatFreshStart, chatVariantNote: noteNeeded ? w.variant : null });
+      return;
+    }
+    const idx = s.pendingCharIdx != null ? s.pendingCharIdx : s.selectedIdx;
+    this.setState({ appConfig: { ...s.appConfig, variant: w.variant }, screen: 'chat', selectedIdx: idx, chatStep: 0, correctionOpen: true, chatVariantNote: null });
+  };
+
+  errorInfoFor(kind, variantLabel) {
+    const base = ERROR_DEFS[kind];
+    if (!base) return null;
+    if (kind === 'sttNoModel') {
+      return { ...base, title: 'Brak pobranego rozpoznawania ' + variantLabel, body: 'Pobierz rozpoznawanie ' + variantLabel + ', aby aplikacja działała szybciej i offline.', actionLabel: 'Pobierz rozpoznawanie ' + variantLabel };
+    }
+    return base;
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); clearInterval(this._micTimer); clearInterval(this._sttTimer); clearTimeout(this._availTimer); }
+
+  // ---- Per-screen render helpers ----
+
+  buildHeaderVals(s) {
+    const stageIdx = { welcome: 0, characters: 1, wizard: 1, chat: 2, progress: 3 }[s.screen];
+    const dotColor = (i) => i <= stageIdx ? TOKENS.primary : TOKENS.neutralDot;
+    const cfg = s.appConfig;
+    const showVariantPill = cfg.variant !== null && s.screen !== 'welcome';
+    const variantOptions = ['US', 'UK'].map(v => ({
+      id: v, label: VARIANT_LABEL[v], isCurrent: cfg.variant === v,
+      ready: cfg.sttDone[v] && !!cfg.voices[v + '_F'] && !!cfg.voices[v + '_M'],
+      bg: cfg.variant === v ? TOKENS.primaryTint : 'transparent',
+      select: () => this.selectVariant(v)
+    }));
+    return {
+      dot1: dotColor(0), dot2: dotColor(1), dot3: dotColor(2), dot4: dotColor(3),
+      showVariantPill, currentVariantLabel: cfg.variant ? VARIANT_LABEL[cfg.variant] : '',
+      variantPopoverOpen: s.variantPopoverOpen, toggleVariantPopover: this.toggleVariantPopover, variantOptions
+    };
+  }
+
+  buildCharacterScreenVals(s) {
+    const cardBgs = ['oklch(95% 0.02 200)', 'oklch(95% 0.035 55)', 'oklch(95% 0.025 150)', 'oklch(95% 0.03 30)', 'oklch(95% 0.02 260)', 'oklch(95% 0.03 80)', 'oklch(95% 0.02 220)', 'oklch(95% 0.03 15)', 'oklch(95% 0.025 175)'];
+    const savedSet = new Set(s.savedOrder);
+    const orderedIds = [...s.savedOrder, ...CHARACTERS.filter(c => !savedSet.has(c.id)).map(c => c.id)];
+    const characters = orderedIds.map((id) => {
+      const c = CHARACTERS[id];
+      const hasSaved = savedSet.has(c.id);
+      const isMostRecent = s.savedOrder[0] === c.id;
+      return {
+        ...c, cardBg: cardBgs[c.id % cardBgs.length],
+        borderColor: isMostRecent ? TOKENS.primary : TOKENS.border,
+        isLastUsed: isMostRecent, hasSaved,
+        startNew: () => this.startNewConversation(c.id),
+        continueConv: () => this.continueConversation(c.id),
+        genderLabel: c.gender === 'F' ? 'kobiecy' : 'męski'
+      };
+    });
+    const rawSel = CHARACTERS[s.selectedIdx] || CHARACTERS[0];
+    const selChar = { ...rawSel, genderLabel: rawSel.gender === 'F' ? 'kobiecy' : 'męski' };
+    return { characters, selChar };
+  }
+
+  buildWizardSegments(w) {
+    const groups = [];
+    w.plan.forEach((item, i) => {
+      const g = GROUP_OF(item);
+      const last = groups[groups.length - 1];
+      if (last && last.key === g) { last.end = i; } else { groups.push({ key: g, label: GROUP_LABEL[g] || g, start: i, end: i }); }
+    });
+    return groups.map((g, i) => {
+      const done = w.step > g.end; const active = w.step >= g.start && w.step <= g.end;
+      return {
+        n: i + 1, label: g.label, mark: done ? '✓' : String(i + 1),
+        dotBg: done ? TOKENS.primary : (active ? TOKENS.accentSoft : TOKENS.neutralDot),
+        dotColor: done ? TOKENS.white : (active ? TOKENS.accent : TOKENS.inkSubtle),
+        color: active ? TOKENS.ink : TOKENS.inkSubtle
+      };
+    });
+  }
+
+  buildWizardErrorState(w, item, variantLabel) {
+    if (w.waiting) return { wIsWaiting: true, wHasBlockingError: false, wError: null };
+    if (w.errorKind && item) {
+      const def = ERROR_DEFS[w.errorKind];
+      const belongsHere = (def.stage === 'intro' && (item.kind === 'micIntro' || item.kind === 'sttIntro') && def.check === (item.kind === 'micIntro' ? 'mic' : 'stt'))
+        || (def.stage === 'result' && (item.kind === 'micResult' || item.kind === 'sttResult') && def.check === (item.kind === 'micResult' ? 'mic' : 'stt'));
+      if (belongsHere) {
+        const info = this.errorInfoFor(w.errorKind, variantLabel);
+        return { wIsWaiting: false, wHasBlockingError: true, wError: { ...info, action: this.wErrorAction } };
+      }
+    }
+    return { wIsWaiting: false, wHasBlockingError: false, wError: null };
+  }
+
+  buildWizardVoiceVals(w, item) {
+    if (!item || item.kind !== 'voice') return { wVoiceList: [], wVoiceMissing: false };
+    const raw = VOICES[w.variant][item.gender].slice().sort((a, b) => Q_RANK[b.quality] - Q_RANK[a.quality]);
+    const recommendedId = raw[0].id;
+    const selectedId = w.voiceStepSelectedId || recommendedId;
+    const wVoiceList = raw.map(v => {
+      const sel = v.id === selectedId;
+      return {
+        ...v, recommended: v.id === recommendedId, qualityLabel: v.quality, pick: () => this.wPickVoice(v.id),
+        border: sel ? 'oklch(55% 0.08 200)' : TOKENS.border, bg: sel ? TOKENS.primarySelected : TOKENS.white,
+        radioBorder: sel ? TOKENS.primary : TOKENS.radioBorder, radioFill: sel ? TOKENS.primary : 'transparent'
+      };
+    });
+    return { wVoiceList, wVoiceMissing: !!w.voiceMissing[w.variant + '_' + item.gender] };
+  }
+
+  buildWizardChecklist(w, item, appConfig) {
+    if (!item || item.kind !== 'summary') return [];
+    const list = [];
+    const inPlan = (kind) => w.plan.some(p => p.kind === kind);
+    if (inPlan('micIntro')) list.push({ key: 'mic', title: 'Mikrofon', detail: 'Gotowe', mark: '✓', dotBg: TOKENS.primary, dotColor: TOKENS.white });
+    list.push({ key: 'stt', title: 'Rozpoznawanie mowy — ' + VARIANT_LABEL[w.variant], detail: 'Gotowe', mark: '✓', dotBg: TOKENS.primary, dotColor: TOKENS.white });
+    const vf = appConfig.voices[w.variant + '_F'], vm = appConfig.voices[w.variant + '_M'];
+    if (inPlan('voice')) {
+      list.push({ key: 'voicef', title: 'Głos kobiecy — ' + VARIANT_LABEL[w.variant], detail: vf ? (vf.name + ' · ' + vf.quality) : 'Wymaga działania', mark: vf ? '✓' : '!', dotBg: vf ? TOKENS.primary : 'oklch(90% 0.05 45)', dotColor: vf ? TOKENS.white : TOKENS.accent });
+      list.push({ key: 'voicem', title: 'Głos męski — ' + VARIANT_LABEL[w.variant], detail: vm ? (vm.name + ' · ' + vm.quality) : 'Wymaga działania', mark: vm ? '✓' : '!', dotBg: vm ? TOKENS.primary : 'oklch(90% 0.05 45)', dotColor: vm ? TOKENS.white : TOKENS.accent });
+    }
+    return list;
+  }
+
+  wDemoOptionStyle(active) {
+    return active
+      ? { bg: TOKENS.accentSoft, border: TOKENS.accent, textColor: 'oklch(40% 0.015 260)', dotColor: TOKENS.accent }
+      : { bg: 'oklch(96% 0.006 75)', border: TOKENS.borderStrong, textColor: TOKENS.inkFaint, dotColor: 'oklch(75% 0.01 260)' };
+  }
+
+  buildWizardDemoOptions(w, item) {
+    if (!item) return [];
+    const withStyle = (opt) => ({ ...opt, ...this.wDemoOptionStyle(opt.active) });
+    if (item.kind === 'micIntro') return [
+      { testid: 'mic-permission', label: DEMO_LABELS.micPermission, action: () => this.wSetDemoError('micPermission'), active: w.errorKind === 'micPermission' },
+      { testid: 'device-unsupported', label: DEMO_LABELS.deviceUnsupported, action: () => this.wSetDemoError('deviceUnsupported'), active: w.errorKind === 'deviceUnsupported' },
+      { testid: 'mic-no-signal', label: DEMO_LABELS.micNoSignal, action: () => this.wSetDemoError('micNoSignal'), active: w.errorKind === 'micNoSignal' }
+    ].map(withStyle);
+    if (item.kind === 'sttIntro') return [
+      { testid: 'stt-permission', label: DEMO_LABELS.sttPermission, action: () => this.wSetDemoError('sttPermission'), active: w.errorKind === 'sttPermission' },
+      { testid: 'stt-no-model', label: DEMO_LABELS.sttNoModel, action: () => this.wSetDemoError('sttNoModel'), active: w.errorKind === 'sttNoModel' },
+      { testid: 'stt-empty', label: DEMO_LABELS.sttEmpty, action: () => this.wSetDemoError('sttEmpty'), active: w.errorKind === 'sttEmpty' },
+      { testid: 'stt-unavailable', label: DEMO_LABELS.sttUnavailable, action: () => this.wSetDemoError('sttUnavailable'), active: w.errorKind === 'sttUnavailable' },
+      { testid: 'stt-unknown', label: DEMO_LABELS.sttUnknown, action: () => this.wSetDemoError('sttUnknown'), active: w.errorKind === 'sttUnknown' },
+      { testid: 'stt-mismatch', label: DEMO_LABELS.mismatch, action: () => this.wSetDemoMismatch(), active: !!w.forceMismatch }
+    ].map(withStyle);
+    if (item.kind === 'sttAvailability') return [
+      { testid: 'force-available', label: DEMO_LABELS.availabilityAvailable, action: () => this.wForceAvailability('available'), active: w.availabilityForce === 'available' },
+      { testid: 'force-unavailable', label: DEMO_LABELS.availabilityUnavailable, action: () => this.wForceAvailability('unavailable'), active: w.availabilityForce === 'unavailable' }
+    ].map(withStyle);
+    if (item.kind === 'voice') return [{ testid: 'voice-missing', label: DEMO_LABELS.voiceMissing, action: this.wSimNoVoice, active: !!w.voiceMissing[w.variant + '_' + item.gender] }].map(withStyle);
+    return [];
+  }
+
+  buildWizardVals(s) {
+    const w = s.wizard;
+    const item = w.plan[w.step] || null;
+    const kind = item ? item.kind : '';
+    const variantLabel = w.variant ? VARIANT_LABEL[w.variant] : '';
+    const genderLabel = item && item.gender === 'F' ? 'kobiecy' : (item && item.gender === 'M' ? 'męski' : '');
+
+    const wScreenTestId = kind || 'wizard';
+    const errState = this.buildWizardErrorState(w, item, variantLabel);
+    const wShowNormal = !errState.wHasBlockingError && !errState.wIsWaiting;
+
+    const micNoSignalPending = w.errorKind === 'micNoSignal';
+    const wMicStatusText = micNoSignalPending ? 'Nie wykrywam głosu' : 'Słyszę Twój głos';
+    const wMicStatusIcon = micNoSignalPending ? '△' : '✓';
+    const wMicStatusColor = micNoSignalPending ? TOKENS.accent : TOKENS.success;
+
+    const voiceVals = this.buildWizardVoiceVals(w, item);
+    const wDemoOptions = this.buildWizardDemoOptions(w, item);
+    const wActiveDemoLabel = errState.wHasBlockingError ? DEMO_LABELS[w.errorKind]
+      : (kind === 'sttResult' && w.resultStatus === 'mismatch' && w.forceMismatch ? DEMO_LABELS.mismatch
+      : (kind === 'sttAvailability' && w.availabilityStatus === 'unavailable' && w.availabilityForce ? DEMO_LABELS.availabilityUnavailable : null));
+
+    const isSwitch = w.isSwitch;
+    const wSummaryTitle = isSwitch ? (variantLabel + ' gotowy do użycia') : ('Konfiguracja gotowa — ' + variantLabel);
+    const wSummarySubtitle = isSwitch ? 'Dokończyliśmy tylko brakujące elementy — reszta pozostała bez zmian.' : 'Sprawdź poniższe elementy — wszystko jest gotowe do pierwszej rozmowy głosowej.';
+    const wFinishLabel = isSwitch ? ('Przełącz na ' + variantLabel) : 'Rozpocznij rozmowę';
+
+    return {
+      wStepText: 'Krok ' + (w.step + 1) + ' z ' + w.plan.length,
+      wScreenTestId, wVariantLabel: variantLabel, wVariantLabelUpper: variantLabel.toUpperCase(),
+      wSegments: this.buildWizardSegments(w),
+      wHasBlockingError: errState.wHasBlockingError, wError: errState.wError, wIsWaiting: errState.wIsWaiting,
+      wShowNormal, wRecheck: this.wRecheck,
+      wIsChooseVariant: kind === 'chooseVariant',
+      wIsMicIntro: kind === 'micIntro', wIsMicActive: kind === 'micActive', wIsMicResult: kind === 'micResult',
+      wIsSttIntro: kind === 'sttIntro', wIsSttActive: kind === 'sttActive', wIsSttResult: kind === 'sttResult',
+      wIsAvailability: kind === 'sttAvailability',
+      wAvailChecking: w.availabilityStatus === 'checking', wAvailAvailable: w.availabilityStatus === 'available', wAvailUnavailable: w.availabilityStatus === 'unavailable',
+      wAvailabilityContinue: this.wAvailabilityContinue,
+      wIsVoice: kind === 'voice', wIsSummary: kind === 'summary',
+      wPhrase: PHRASE, wRecTime: Math.floor(w.sttElapsed) + 's',
+      wLevels: (kind === 'sttActive' ? w.sttLevels : w.micLevels).map(h => ({ h: Math.round(h) })),
+      wMicStatusText, wMicStatusIcon, wMicStatusColor,
+      wResultSuccess: w.resultStatus === 'success', wResultMismatch: w.resultStatus === 'mismatch',
+      wRecognized: w.resultStatus === 'mismatch' ? MISMATCH_TEXT : PHRASE.replace('.', ''),
+      wGenderLabel: genderLabel, wGenderLabelUpper: genderLabel.toUpperCase(),
+      wVoiceMissing: voiceVals.wVoiceMissing, wVoiceList: voiceVals.wVoiceList, wListened: w.voiceStepListened,
+      wConfirmDisabled: !w.voiceStepListened, wConfirmBg: w.voiceStepListened ? TOKENS.primary : TOKENS.disabled,
+      wConfirmOpacity: w.voiceStepListened ? 1 : 0.55,
+      wChecklist: this.buildWizardChecklist(w, item, s.appConfig),
+      wSummaryTitle, wSummarySubtitle, wFinishLabel,
+      wHasDemoOptions: wDemoOptions.length > 0 && wShowNormal, wDemoOptions, wDemoOpen: w.demoOpen, wToggleDemo: this.wToggleDemo,
+      wHasActiveDemoLabel: !!wActiveDemoLabel, wActiveDemoLabel,
+      chooseVariantUS: this.chooseVariantUS, chooseVariantUK: this.chooseVariantUK,
+      wStartMic: this.wStartMic, wStopMic: this.wStopMic, wStartStt: this.wStartStt, wStopStt: this.wStopStt,
+      wAdvance: this.wAdvance, wRetrySttSameStep: this.wRetrySttSameStep,
+      wListen: this.wListen, wConfirmVoice: this.wConfirmVoice, wFixVoice: this.wFixVoice, wFinish: this.wFinish
+    };
+  }
+
+  buildChatVals(s) {
+    const selChar = CHARACTERS[s.selectedIdx] || CHARACTERS[0];
+    const variant = s.appConfig.variant || 'US';
+    const primaryWord = variant === 'UK' ? 'colour' : 'color';
+    const altWord = variant === 'UK' ? 'color' : 'colour';
+    const altVariantLabel = variant === 'UK' ? 'American English' : 'British English';
+    const curVariantLabel = variant === 'UK' ? 'British English' : 'American English';
+    const dialectNoteText = 'Gdybyś napisał(a) „' + altWord + '”, to też byłoby poprawne — w ' + altVariantLabel + '. W ' + curVariantLabel + ' zwykle używa się „' + primaryWord + '”.';
+    return {
+      chatStep: s.chatStep, chatStepIsInput: s.chatStep === 0, chatHasUserMsg: s.chatStep >= 1,
+      chatIsTyping: s.chatStep === 1, chatHasReply: s.chatStep >= 2, finishDisabled: s.chatStep < 2,
+      correctionOpen: s.correctionOpen, correctionArrow: s.correctionOpen ? '⌃' : '⌄',
+      finishBg: s.chatStep >= 2 ? TOKENS.primary : TOKENS.disabled, finishOpacity: s.chatStep >= 2 ? 1 : 0.6,
+      dialectNoteText, hasVariantNote: !!s.chatVariantNote, variantNoteLabel: s.chatVariantNote ? VARIANT_LABEL[s.chatVariantNote] : '',
+      // A fresh conversation (after "Nowa rozmowa" or before ever sending anything) shows an
+      // empty, italic placeholder in the message field — never the previous/demo message text.
+      chatInputDisplay: s.chatFreshStart ? 'Napisz wiadomość…' : selChar.mistake,
+      chatInputColor: s.chatFreshStart ? 'oklch(60% 0.01 260)' : 'oklch(30% 0.015 260)',
+      // "Nowa rozmowa" is hidden on a truly empty, never-touched first chat (nothing to
+      // start over from) — shown once there is user/tutor content, or when the screen was
+      // reached via "Kontynuuj rozmowę" (which always has prior content by definition).
+      wShowNewConversation: s.chatStep >= 1 || s.chatOpenedViaContinue,
+      wChatInFlightWarning: s.chatStep === 1,
+      newConvoConfirmOpen: s.newConvoConfirmOpen,
+      toggleNewConvoConfirm: this.toggleNewConvoConfirm, cancelNewConvo: this.cancelNewConvo, confirmNewConvo: this.confirmNewConvo
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    return {
+      isWelcome: s.screen === 'welcome', isCharacters: s.screen === 'characters',
+      isWizard: s.screen === 'wizard', isChat: s.screen === 'chat', isProgress: s.screen === 'progress',
+      showBack: s.screen !== 'welcome',
+      ...this.buildHeaderVals(s),
+      ...this.buildCharacterScreenVals(s),
+      ...this.buildWizardVals(s),
+      ...this.buildChatVals(s),
+      goToCharacters: this.goToCharacters, sendMessage: this.sendMessage, toggleCorrection: this.toggleCorrection,
+      finishConversation: this.finishConversation, continueChat: this.continueChat, goBack: this.goBack
+    };
+  }
+}
+</script>
+</body>
+</html>
