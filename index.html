@@ -1,3 +1,7 @@
+<!-- REVISION: VT-MACOS-CONVERSATION-AUDIO-R2 | status: proposed_revision | platform: macOS
+     Builds on the accepted base prototype (global US/UK variant, tutor set, Kontynuuj/Nowa rozmowa/Zakończ rozmowę).
+     Scope: mic-test "too quiet" state, mic terminal-result correctness, STT error copy (no "download" framing),
+     voice-list provenance copy + settings CTA, and a consistent primary/secondary/ghost button scale. -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -82,7 +86,7 @@
           <p style="margin:0;max-width:44ch;font-size:clamp(15px,1.5vw,17px);line-height:1.6;color:oklch(45% 0.015 260);">
             VirtualTutor uczy przez naturalne rozmowy z osobistym tutorem — bez lekcji, testów i presji.
           </p>
-          <button data-testid="welcome-start" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:16px;font-weight:600;box-shadow:0 10px 24px -10px oklch(40% 0.06 200 / 0.5);" style-hover="background:oklch(40% 0.06 200);">
+          <button data-testid="welcome-start" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:16px;font-weight:600;box-shadow:0 10px 24px -10px oklch(40% 0.06 200 / 0.5);" style-hover="background:oklch(40% 0.06 200);">
             Zacznij rozmowę
           </button>
         </div>
@@ -137,7 +141,7 @@
               <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
               </sc-if>
-              <button data-testid="{{ wError.actionTestid }}" onClick="{{ wError.action }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">{{ wError.actionLabel }}</button>
+              <button data-testid="{{ wError.actionTestid }}" onClick="{{ wError.action }}" style="all:unset;cursor:pointer;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">{{ wError.actionLabel }}</button>
             </sc-if>
 
             <sc-if value="{{ wIsWaiting }}" hint-placeholder-val="{{ false }}">
@@ -147,7 +151,7 @@
               <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
               </sc-if>
-              <button data-testid="recheck-settings" onClick="{{ wRecheck }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Sprawdź ponownie</button>
+              <button data-testid="recheck-settings" onClick="{{ wRecheck }}" style="all:unset;cursor:pointer;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Sprawdź ponownie</button>
             </sc-if>
 
             <sc-if value="{{ wShowNormal }}" hint-placeholder-val="{{ true }}">
@@ -166,7 +170,7 @@
                 <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">MIKROFON</div>
                 <h2 style="margin:0;font-size:22px;font-weight:700;max-width:26ch;">Za chwilę sprawdzimy Twój mikrofon</h2>
                 <p style="margin:0;max-width:40ch;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">Poprosimy Cię o powiedzenie kilku słów, aby upewnić się, że mikrofon działa poprawnie. To jedyny test mikrofonu — dotyczy obu wariantów językowych.</p>
-                <button data-testid="mic-check-start" onClick="{{ wStartMic }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij sprawdzanie mikrofonu</button>
+                <button data-testid="mic-check-start" onClick="{{ wStartMic }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij sprawdzanie mikrofonu</button>
               </sc-if>
 
               <sc-if value="{{ wIsMicActive }}" hint-placeholder-val="{{ false }}">
@@ -181,13 +185,16 @@
                 <div role="status" aria-live="polite" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:{{ wMicStatusColor }};">
                   <span aria-hidden="true">{{ wMicStatusIcon }}</span> {{ wMicStatusText }}
                 </div>
-                <button data-testid="mic-check-stop" onClick="{{ wStopMic }}" style="all:unset;cursor:pointer;margin-top:4px;padding:14px 28px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ test</button>
+                <sc-if value="{{ wQuietHintVisible }}" hint-placeholder-val="{{ false }}">
+                  <div data-testid="mic-quiet-hint" role="status" aria-live="polite" style="margin-top:-8px;font-size:12.5px;font-weight:600;color:oklch(50% 0.10 45);">Nagranie jest zbyt ciche — mów trochę głośniej</div>
+                </sc-if>
+                <button data-testid="mic-check-stop" onClick="{{ wStopMic }}" style="all:unset;cursor:pointer;margin-top:4px;padding:16px 32px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ test</button>
               </sc-if>
 
               <sc-if value="{{ wIsMicResult }}" hint-placeholder-val="{{ false }}">
                 <div style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
                 <h2 style="margin:0;font-size:21px;font-weight:700;">Mikrofon działa poprawnie.</h2>
-                <button data-testid="mic-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;white-space:nowrap;">Sprawdź rozpoznawanie mowy — {{ wVariantLabel }}</button>
+                <button data-testid="mic-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;white-space:nowrap;">Sprawdź rozpoznawanie mowy — {{ wVariantLabel }}</button>
               </sc-if>
 
               <sc-if value="{{ wIsAvailability }}" hint-placeholder-val="{{ false }}">
@@ -201,7 +208,7 @@
                   <div data-testid="availability-available" style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
                   <h2 style="margin:0;font-size:20px;font-weight:700;max-width:28ch;">Rozpoznawanie {{ wVariantLabel }} jest już dostępne</h2>
                   <p style="margin:0;max-width:40ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Potwierdzono automatycznie — nie musisz nic mówić.</p>
-                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Kontynuuj</button>
+                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Kontynuuj</button>
                 </sc-if>
                 <sc-if value="{{ wAvailUnavailable }}" hint-placeholder-val="{{ false }}">
                   <div data-testid="availability-unavailable" style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 45);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(55% 0.10 45);" aria-hidden="true">!</div>
@@ -210,7 +217,7 @@
                   <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
                   </sc-if>
-                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Sprawdź mową</button>
+                  <button data-testid="availability-continue" onClick="{{ wAvailabilityContinue }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Sprawdź mową</button>
                 </sc-if>
               </sc-if>
 
@@ -218,7 +225,7 @@
                 <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">ROZPOZNAWANIE MOWY — {{ wVariantLabelUpper }}</div>
                 <h2 style="margin:0;font-size:22px;font-weight:700;max-width:26ch;">Sprawdzimy teraz rozpoznawanie angielskiej mowy</h2>
                 <p style="margin:0;max-width:40ch;font-size:14.5px;line-height:1.6;color:oklch(45% 0.015 260);">Poprosimy Cię o przeczytanie krótkiego zdania na głos.</p>
-                <button data-testid="speech-check-start" onClick="{{ wStartStt }}" style="all:unset;cursor:pointer;margin-top:6px;padding:15px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij próbę rozpoznawania</button>
+                <button data-testid="speech-check-start" onClick="{{ wStartStt }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;white-space:nowrap;">Rozpocznij próbę rozpoznawania</button>
               </sc-if>
 
               <sc-if value="{{ wIsSttActive }}" hint-placeholder-val="{{ false }}">
@@ -226,13 +233,15 @@
                 <p style="margin:0;font-size:14.5px;color:oklch(40% 0.015 260);">Powiedz teraz po angielsku:</p>
                 <div data-testid="stt-phrase" style="max-width:48ch;font-size:clamp(24px,3.4vw,32px);font-weight:700;line-height:1.3;font-family:'Lora',serif;color:oklch(24% 0.015 260);">"{{ wPhrase }}"</div>
                 <div data-testid="speech-icon" style="width:64px;height:64px;border-radius:50%;background:oklch(60% 0.13 25);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(99% 0.005 75);animation:vt-pulse 1.6s infinite;margin-top:4px;" aria-label="Nagrywanie aktywne">🎙</div>
+                <!-- speech-meter mirrors the mic-test meter: same dynamic bar behavior, no separate audio contract implied -->
+
                 <div data-testid="speech-meter" style="display:flex;align-items:flex-end;gap:4px;height:36px;" aria-hidden="true">
                   <sc-for list="{{ wLevels }}" as="lvl" hint-placeholder-count="20">
                     <div style="width:5px;border-radius:3px;background:oklch(46% 0.06 200);height:{{ lvl.h }}px;transition:height .12s ease;"></div>
                   </sc-for>
                 </div>
                 <div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;">{{ wRecTime }}</div>
-                <button data-testid="speech-check-stop" onClick="{{ wStopStt }}" style="all:unset;cursor:pointer;margin-top:2px;padding:14px 28px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ nagrywanie</button>
+                <button data-testid="speech-check-stop" onClick="{{ wStopStt }}" style="all:unset;cursor:pointer;margin-top:2px;padding:16px 32px;border-radius:100px;background:oklch(55% 0.16 25);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">■ Zakończ nagrywanie</button>
               </sc-if>
 
               <sc-if value="{{ wIsSttResult }}" hint-placeholder-val="{{ false }}">
@@ -240,7 +249,7 @@
                   <div style="width:60px;height:60px;border-radius:50%;background:oklch(90% 0.05 150);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(45% 0.10 150);" aria-hidden="true">✓</div>
                   <h2 style="margin:0;font-size:21px;font-weight:700;">Rozpoznawanie mowy działa poprawnie.</h2>
                   <div data-testid="stt-recognized-text" style="font-size:13.5px;color:oklch(45% 0.015 260);max-width:44ch;">Rozpoznano: „{{ wRecognized }}”</div>
-                  <button data-testid="speech-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:8px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Przejdź dalej</button>
+                  <button data-testid="speech-check-continue" onClick="{{ wAdvance }}" style="all:unset;cursor:pointer;margin-top:8px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Przejdź dalej</button>
                 </sc-if>
                 <sc-if value="{{ wResultMismatch }}" hint-placeholder-val="{{ false }}">
                   <div style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 45);display:flex;align-items:center;justify-content:center;font-size:26px;color:oklch(55% 0.10 45);" aria-hidden="true">!</div>
@@ -252,7 +261,7 @@
                   <sc-if value="{{ wHasActiveDemoLabel }}" hint-placeholder-val="{{ false }}">
                     <div style="font-size:11px;font-weight:700;color:oklch(60% 0.012 260);background:oklch(96% 0.006 75);padding:4px 11px;border-radius:100px;">Wariant demo: {{ wActiveDemoLabel }}</div>
                   </sc-if>
-                  <button data-testid="speech-check-retry" onClick="{{ wRetrySttSameStep }}" style="all:unset;cursor:pointer;margin-top:6px;padding:14px 30px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Powtórz próbę</button>
+                  <button data-testid="speech-check-retry" onClick="{{ wRetrySttSameStep }}" style="all:unset;cursor:pointer;margin-top:6px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;">Powtórz próbę</button>
                 </sc-if>
               </sc-if>
 
@@ -260,12 +269,14 @@
                 <sc-if value="{{ wVoiceMissing }}" hint-placeholder-val="{{ false }}">
                   <div data-testid="voice-error-missing" style="width:60px;height:60px;border-radius:50%;background:oklch(94% 0.03 40);display:flex;align-items:center;justify-content:center;font-size:26px;" aria-hidden="true">🔊</div>
                   <h2 style="margin:0;font-size:20px;font-weight:700;max-width:26ch;">Nie masz jeszcze wysokiej jakości głosu {{ wGenderLabel }} {{ wVariantLabel }}</h2>
-                  <p style="margin:0;max-width:44ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">Pobierz głos Enhanced lub Premium, aby tutor brzmiał naturalniej.</p>
-                  <button data-testid="open-voice-settings" onClick="{{ wFixVoice }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Otwórz ustawienia głosów</button>
+                  <p style="margin:0;max-width:44ch;font-size:14px;line-height:1.6;color:oklch(45% 0.015 260);">To zależy od głosów zainstalowanych na Twoim Macu — aplikacja sama niczego nie pobiera.</p>
+                  <p data-testid="voice-settings-instruction" style="margin:0;max-width:44ch;font-size:13px;line-height:1.6;color:oklch(50% 0.015 260);background:oklch(97% 0.008 75);border-radius:10px;padding:10px 14px;">W Ustawieniach systemowych: Dostępność → Zawartość mówiona → Głosy — poszukaj głosu w jakości Enhanced lub Premium dla {{ wVariantLabel }} i wróć tutaj.</p>
+                  <button data-testid="open-voice-settings" onClick="{{ wFixVoice }}" style="all:unset;cursor:pointer;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Otwórz ustawienia głosów</button>
                 </sc-if>
                 <sc-if value="{{ !wVoiceMissing }}" hint-placeholder-val="{{ true }}">
                   <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:oklch(50% 0.10 45);">GŁOS {{ wGenderLabelUpper }} — {{ wVariantLabelUpper }}</div>
                   <h2 style="margin:0 0 6px;font-size:21px;font-weight:700;max-width:30ch;">Wybierz głos {{ wGenderLabel }} dla {{ wVariantLabel }}</h2>
+                  <p data-testid="voice-source-note" style="margin:0;max-width:46ch;font-size:12.5px;line-height:1.6;color:oklch(50% 0.015 260);">Lista pokazuje głosy zainstalowane lokalnie na tym Macu — może być krótka. Więcej głosów znajdziesz w ustawieniach systemowych; dostępność zależy od wersji macOS i języka.</p>
                   <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:440px;margin-top:4px;">
                     <sc-for list="{{ wVoiceList }}" as="v" hint-placeholder-count="3">
                       <button data-testid="voice-option-{{ v.id }}" onClick="{{ v.pick }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid {{ v.border }};background:{{ v.bg }};text-align:left;">
@@ -275,18 +286,18 @@
                           <div style="font-size:11.5px;color:oklch(50% 0.015 260);">{{ v.qualityLabel }}</div>
                         </span>
                         <sc-if value="{{ v.recommended }}" hint-placeholder-val="{{ false }}">
-                          <span style="font-size:10.5px;font-weight:700;color:oklch(50% 0.10 45);background:oklch(95% 0.03 45);padding:4px 9px;border-radius:100px;">Rekomendowany</span>
+                          <span style="font-size:10.5px;font-weight:700;color:oklch(50% 0.10 45);background:oklch(95% 0.03 45);padding:4px 9px;border-radius:100px;">Przykładowo polecany</span>
                         </sc-if>
                       </button>
                     </sc-for>
                   </div>
                   <div style="display:flex;gap:10px;align-items:center;margin-top:2px;">
-                    <button data-testid="voice-listen-sample" onClick="{{ wListen }}" style="all:unset;cursor:pointer;padding:11px 20px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:13.5px;font-weight:600;color:oklch(40% 0.015 260);">▶ Odsłuchaj próbkę</button>
+                    <button data-testid="voice-listen-sample" onClick="{{ wListen }}" style="all:unset;cursor:pointer;padding:12px 24px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:13.5px;font-weight:600;color:oklch(40% 0.015 260);">▶ Odsłuchaj próbkę</button>
                     <sc-if value="{{ wListened }}" hint-placeholder-val="{{ false }}">
                       <span role="status" aria-live="polite" style="font-size:12.5px;color:oklch(45% 0.10 150);font-weight:600;">✓ Odsłuchano</span>
                     </sc-if>
                   </div>
-                  <button data-testid="voice-confirm" onClick="{{ wConfirmVoice }}" disabled="{{ wConfirmDisabled }}" style="all:unset;cursor:pointer;margin-top:8px;padding:15px 32px;border-radius:100px;background:{{ wConfirmBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;opacity:{{ wConfirmOpacity }};">Ten głos mi odpowiada</button>
+                  <button data-testid="voice-confirm" onClick="{{ wConfirmVoice }}" disabled="{{ wConfirmDisabled }}" style="all:unset;cursor:pointer;margin-top:8px;padding:16px 32px;border-radius:100px;background:{{ wConfirmBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:700;opacity:{{ wConfirmOpacity }};">Ten głos mi odpowiada</button>
                 </sc-if>
               </sc-if>
 
@@ -304,7 +315,7 @@
                     </div>
                   </sc-for>
                 </div>
-                <button data-testid="setup-finish" onClick="{{ wFinish }}" style="all:unset;cursor:pointer;margin-top:10px;padding:16px 36px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;">{{ wFinishLabel }}</button>
+                <button data-testid="setup-finish" onClick="{{ wFinish }}" style="all:unset;cursor:pointer;margin-top:10px;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:15.5px;font-weight:700;">{{ wFinishLabel }}</button>
               </sc-if>
 
               <sc-if value="{{ wHasDemoOptions }}" hint-placeholder-val="{{ false }}">
@@ -414,11 +425,11 @@
           <div style="padding:18px clamp(20px,4vw,48px);border-top:1px solid oklch(92% 0.01 75);display:flex;gap:12px;align-items:center;">
             <sc-if value="{{ chatStepIsInput }}" hint-placeholder-val="{{ true }}">
               <div style="flex:1;background:oklch(96% 0.008 75);border:1px solid oklch(90% 0.012 75);border-radius:100px;padding:13px 20px;font-size:15px;color:{{ chatInputColor }};">{{ chatInputDisplay }}</div>
-              <button data-testid="chat-send" onClick="{{ sendMessage }}" style="all:unset;cursor:pointer;padding:13px 26px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Wyślij</button>
+              <button data-testid="chat-send" onClick="{{ sendMessage }}" style="all:unset;cursor:pointer;padding:12px 24px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Wyślij</button>
             </sc-if>
             <sc-if value="{{ chatHasUserMsg }}" hint-placeholder-val="{{ false }}">
               <div style="flex:1;font-size:13.5px;color:oklch(55% 0.015 260);font-style:italic;">Wiadomość wysłana</div>
-              <button data-testid="chat-finish" onClick="{{ finishConversation }}" disabled="{{ finishDisabled }}" style="all:unset;cursor:pointer;padding:13px 26px;border-radius:100px;background:{{ finishBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;opacity:{{ finishOpacity }};">Zakończ rozmowę</button>
+              <button data-testid="chat-finish" onClick="{{ finishConversation }}" disabled="{{ finishDisabled }}" style="all:unset;cursor:pointer;padding:12px 24px;border-radius:100px;background:{{ finishBg }};color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;opacity:{{ finishOpacity }};">Zakończ rozmowę</button>
             </sc-if>
           </div>
         </div>
@@ -435,8 +446,8 @@
             <div style="width:34px;height:6px;border-radius:100px;background:oklch(88% 0.015 200);"></div>
           </div>
           <div style="display:flex;gap:12px;margin-top:14px;">
-            <button data-testid="progress-change-tutor" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;padding:14px 26px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:14.5px;font-weight:600;color:oklch(40% 0.015 260);">Zmień tutora</button>
-            <button data-testid="progress-continue" onClick="{{ continueChat }}" style="all:unset;cursor:pointer;padding:14px 28px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Kontynuuj rozmowę</button>
+            <button data-testid="progress-change-tutor" onClick="{{ goToCharacters }}" style="all:unset;cursor:pointer;padding:12px 24px;border-radius:100px;border:1.5px solid oklch(88% 0.012 75);font-size:14.5px;font-weight:600;color:oklch(40% 0.015 260);">Zmień tutora</button>
+            <button data-testid="progress-continue" onClick="{{ continueChat }}" style="all:unset;cursor:pointer;padding:16px 32px;border-radius:100px;background:oklch(46% 0.06 200);color:oklch(99% 0.005 75);font-size:14.5px;font-weight:600;">Kontynuuj rozmowę</button>
           </div>
         </div>
       </sc-if>
@@ -456,6 +467,10 @@ const TOKENS = {
   success: 'oklch(45% 0.10 150)', successSoft: 'oklch(90% 0.05 150)',
   white: 'oklch(99% 0.005 75)', disabled: 'oklch(80% 0.02 200)', neutralDot: 'oklch(92% 0.008 75)'
 };
+// R2: consistent action-button geometry — three tiers (primary / secondary / ghost),
+// shared by all screens so no per-screen padding drift. Not pixel-perfect law, just one
+// reference scale so the whole app reads as one system.
+const BTN = { primary: 'padding:16px 32px;', secondary: 'padding:12px 24px;', ghost: 'padding:9px 16px;' };
 
 // Characters no longer carry a language variant — that is now a single global setting
 // (see appConfig.variant). Personality/style stay as the sole differentiators.
@@ -557,16 +572,17 @@ const ERROR_DEFS = {
   micPermission: { title: 'Brak dostępu do mikrofonu', body: 'Aby sprawdzić mikrofon, aplikacja potrzebuje zgody na dostęp do niego w ustawieniach prywatności systemu.', actionLabel: 'Otwórz dostęp do mikrofonu', stage: 'intro', check: 'mic', kind: 'settings', testid: 'mic-error-permission', actionTestid: 'open-microphone-settings' },
   deviceUnsupported: { title: 'To urządzenie nie obsługuje tej funkcji', body: 'Rozpoznawanie mowy wymaga nowszej wersji systemu operacyjnego lub innego wejścia audio.', actionLabel: 'Sprawdź ponownie', stage: 'intro', check: 'mic', kind: 'retry', testid: 'mic-error-unsupported-device', actionTestid: 'retry-check' },
   sttPermission: { title: 'Brak dostępu do rozpoznawania mowy', body: 'System potrzebuje osobnej zgody na korzystanie z rozpoznawania mowy w tej aplikacji.', actionLabel: 'Otwórz ustawienia rozpoznawania mowy', stage: 'intro', check: 'stt', kind: 'settings', testid: 'stt-error-permission', actionTestid: 'open-speech-settings' },
-  sttNoModel: { title: '', body: '', actionLabel: '', stage: 'intro', check: 'stt', kind: 'settings', testid: 'stt-error-language-model', actionTestid: 'download-language-pack' },
+  sttNoModel: { title: '', body: '', actionLabel: '', stage: 'intro', check: 'stt', kind: 'settings', testid: 'stt-error-language-model', actionTestid: 'open-speech-language-settings' },
   micNoSignal: { title: 'Nie wykrywam głosu', body: 'Sprawdź, czy mikrofon jest podłączony i niewyciszony, a następnie spróbuj ponownie.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'mic', kind: 'retry', testid: 'mic-error-no-signal', actionTestid: 'retry-check' },
+  micTooQuiet: { title: 'Nagranie było zbyt ciche', body: 'Sygnał był wykrywany, ale zbyt cichy, aby dokończyć test. Spróbuj ponownie i mów nieco głośniej.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'mic', kind: 'retry', testid: 'mic-error-too-quiet', actionTestid: 'retry-check' },
   sttEmpty: { title: 'Rozpoznawanie nie zwróciło wyniku', body: 'Nie udało się uchwycić żadnej wypowiedzi. Przeczytaj zdanie jeszcze raz, trochę głośniej.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-empty', actionTestid: 'retry-check' },
   sttUnavailable: { title: 'Rozpoznawanie mowy jest chwilowo niedostępne', body: 'Usługa nie odpowiada. Spróbuj ponownie za chwilę.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-unavailable', actionTestid: 'retry-check' },
   sttUnknown: { title: 'Coś poszło nie tak', body: 'Nie udało się dokończyć próby z nieznanego powodu. Spróbuj ponownie.', actionLabel: 'Spróbuj ponownie', stage: 'result', check: 'stt', kind: 'retry', testid: 'stt-error-unknown', actionTestid: 'retry-check' }
 };
 
 const DEMO_LABELS = {
-  micPermission: 'Brak dostępu do mikrofonu', deviceUnsupported: 'Urządzenie nieobsługiwane', micNoSignal: 'Nie wykrywam głosu',
-  sttPermission: 'Brak dostępu do rozpoznawania mowy', sttNoModel: 'Brak pobranego modelu językowego', sttEmpty: 'Pusty wynik rozpoznawania',
+  micPermission: 'Brak dostępu do mikrofonu', deviceUnsupported: 'Urządzenie nieobsługiwane', micNoSignal: 'Nie wykrywam głosu', micTooQuiet: 'Sygnał zbyt cichy',
+  sttPermission: 'Brak dostępu do rozpoznawania mowy', sttNoModel: 'Wymaga sprawdzenia ustawień', sttEmpty: 'Pusty wynik rozpoznawania',
   sttUnavailable: 'Usługa chwilowo niedostępna', sttUnknown: 'Nieznany błąd', mismatch: 'Rozpoznano inną wypowiedź',
   voiceMissing: 'Brak odpowiedniego głosu', availabilityAvailable: 'Wymuszono: dostępne', availabilityUnavailable: 'Wymuszono: niedostępne'
 };
@@ -725,14 +741,18 @@ class Component extends DCLogic {
     this.wPatch({ step: this.state.wizard.step + 1, micElapsed: 0, micLevels: new Array(20).fill(6) });
     this._micTimer = setInterval(() => {
       this.setState(s => {
-        const levels = s.wizard.micLevels.slice(1); levels.push(6 + Math.random() * 34);
+        const quiet = s.wizard.errorKind === 'micTooQuiet';
+        const levels = s.wizard.micLevels.slice(1); levels.push(quiet ? (6 + Math.random() * 9) : (6 + Math.random() * 34));
         return { wizard: { ...s.wizard, micElapsed: s.wizard.micElapsed + 0.15, micLevels: levels } };
       });
     }, 150);
   };
   wStopMic = () => {
     clearInterval(this._micTimer);
-    this.setState(s => ({ appConfig: { ...s.appConfig, micDone: true }, wizard: { ...s.wizard, step: s.wizard.step + 1 } }));
+    // Only a clean signal marks the mic as actually done — "no signal" and "too quiet" are
+    // terminal results that need a real retry, not a silently-passed test.
+    const isMicResultError = this.state.wizard.errorKind === 'micNoSignal' || this.state.wizard.errorKind === 'micTooQuiet';
+    this.setState(s => ({ appConfig: isMicResultError ? s.appConfig : { ...s.appConfig, micDone: true }, wizard: { ...s.wizard, step: s.wizard.step + 1 } }));
   };
 
   wStartStt = () => {
@@ -838,7 +858,12 @@ class Component extends DCLogic {
     const base = ERROR_DEFS[kind];
     if (!base) return null;
     if (kind === 'sttNoModel') {
-      return { ...base, title: 'Brak pobranego rozpoznawania ' + variantLabel, body: 'Pobierz rozpoznawanie ' + variantLabel + ', aby aplikacja działała szybciej i offline.', actionLabel: 'Pobierz rozpoznawanie ' + variantLabel };
+      // Mic is always tested before this step is reachable — say so, and point at the
+      // actually-relevant system setting instead of implying the app can "download" anything.
+      return { ...base,
+        title: 'Rozpoznawanie mowy ' + variantLabel + ' wymaga sprawdzenia w ustawieniach systemowych',
+        body: 'Mikrofon działa poprawnie — to nie jest problem ze sprzętem. System musi mieć włączone i gotowe rozpoznawanie mowy dla ' + variantLabel + '. Sprawdź to w ustawieniach systemowych i wróć do aplikacji.',
+        actionLabel: 'Otwórz ustawienia rozpoznawania mowy' };
     }
     return base;
   }
@@ -961,7 +986,8 @@ class Component extends DCLogic {
     if (item.kind === 'micIntro') return [
       { testid: 'mic-permission', label: DEMO_LABELS.micPermission, action: () => this.wSetDemoError('micPermission'), active: w.errorKind === 'micPermission' },
       { testid: 'device-unsupported', label: DEMO_LABELS.deviceUnsupported, action: () => this.wSetDemoError('deviceUnsupported'), active: w.errorKind === 'deviceUnsupported' },
-      { testid: 'mic-no-signal', label: DEMO_LABELS.micNoSignal, action: () => this.wSetDemoError('micNoSignal'), active: w.errorKind === 'micNoSignal' }
+      { testid: 'mic-no-signal', label: DEMO_LABELS.micNoSignal, action: () => this.wSetDemoError('micNoSignal'), active: w.errorKind === 'micNoSignal' },
+      { testid: 'mic-too-quiet', label: DEMO_LABELS.micTooQuiet, action: () => this.wSetDemoError('micTooQuiet'), active: w.errorKind === 'micTooQuiet' }
     ].map(withStyle);
     if (item.kind === 'sttIntro') return [
       { testid: 'stt-permission', label: DEMO_LABELS.sttPermission, action: () => this.wSetDemoError('sttPermission'), active: w.errorKind === 'sttPermission' },
@@ -990,10 +1016,14 @@ class Component extends DCLogic {
     const errState = this.buildWizardErrorState(w, item, variantLabel);
     const wShowNormal = !errState.wHasBlockingError && !errState.wIsWaiting;
 
+    // Three distinct live states while recording — silence, "detected but too quiet", and a
+    // good signal — each with its own text so the user knows exactly what's happening now.
     const micNoSignalPending = w.errorKind === 'micNoSignal';
-    const wMicStatusText = micNoSignalPending ? 'Nie wykrywam głosu' : 'Słyszę Twój głos';
-    const wMicStatusIcon = micNoSignalPending ? '△' : '✓';
-    const wMicStatusColor = micNoSignalPending ? TOKENS.accent : TOKENS.success;
+    const micTooQuietPending = w.errorKind === 'micTooQuiet';
+    const wMicStatusText = micNoSignalPending ? 'Nie wykrywam głosu' : (micTooQuietPending ? 'Wykrywam głos, ale jest zbyt cichy' : 'Słyszę Twój głos');
+    const wMicStatusIcon = micNoSignalPending ? '△' : (micTooQuietPending ? '~' : '✓');
+    const wMicStatusColor = micNoSignalPending || micTooQuietPending ? TOKENS.accent : TOKENS.success;
+    const wQuietHintVisible = micTooQuietPending;
 
     const voiceVals = this.buildWizardVoiceVals(w, item);
     const wDemoOptions = this.buildWizardDemoOptions(w, item);
@@ -1021,7 +1051,7 @@ class Component extends DCLogic {
       wIsVoice: kind === 'voice', wIsSummary: kind === 'summary',
       wPhrase: PHRASE, wRecTime: Math.floor(w.sttElapsed) + 's',
       wLevels: (kind === 'sttActive' ? w.sttLevels : w.micLevels).map(h => ({ h: Math.round(h) })),
-      wMicStatusText, wMicStatusIcon, wMicStatusColor,
+      wMicStatusText, wMicStatusIcon, wMicStatusColor, wQuietHintVisible,
       wResultSuccess: w.resultStatus === 'success', wResultMismatch: w.resultStatus === 'mismatch',
       wRecognized: w.resultStatus === 'mismatch' ? MISMATCH_TEXT : PHRASE.replace('.', ''),
       wGenderLabel: genderLabel, wGenderLabelUpper: genderLabel.toUpperCase(),
